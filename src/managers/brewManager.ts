@@ -28,16 +28,18 @@ export class BrewManager {
     const packages: InstalledApp[] = [];
 
     try {
-      const output = execSync('brew list --json').toString();
-      const data = JSON.parse(output) as any[];
+      // Use 'brew list -1' which outputs one package per line
+      const output = execSync('brew list -1').toString();
+      const lines = output.split('\n').filter((line) => line.trim().length > 0);
 
-      for (const pkg of data) {
-        const cellPath = path.join(this.brewPrefix, 'Cellar', pkg);
+      for (const pkg of lines) {
+        const packageName = pkg.trim();
+        const cellarPath = path.join(this.brewPrefix, 'Cellar', packageName);
         packages.push({
-          name: pkg,
+          name: packageName,
           version: 'unknown',
           installMethod: 'brew',
-          mainPath: cellPath,
+          mainPath: cellarPath,
           installedDate: undefined,
         });
       }

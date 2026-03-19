@@ -5,6 +5,7 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { Detector } from './core/detector';
 import { Remover } from './core/remover';
+import { GUIServer } from './ui/guiServer';
 import {
   showMainMenu,
   showAppMenu,
@@ -421,6 +422,37 @@ async function main(): Promise<void> {
         }
       } catch (error) {
         spinner.fail((error as Error).message);
+      }
+    });
+
+  program
+    .command('gui')
+    .description('Launch AppClean GUI server (opens at http://localhost:3000)')
+    .option('--port <number>', 'Port to run GUI server on', '3000')
+    .action(async (options) => {
+      const port = parseInt(options.port, 10);
+
+      if (isNaN(port) || port < 1 || port > 65535) {
+        Logger.error('Invalid port number. Please use a port between 1 and 65535.');
+        process.exit(1);
+      }
+
+      const guiServer = new GUIServer(port);
+
+      try {
+        await guiServer.start();
+        Logger.info(`AppClean GUI is running at ${chalk.cyan(`http://localhost:${port}`)}`);
+        Logger.info('Press Ctrl+C to stop the server');
+
+        // Keep the server running - handle graceful shutdown
+        process.on('SIGINT', async () => {
+          Logger.info('Shutting down...');
+          await guiServer.stop();
+          process.exit(0);
+        });
+      } catch (error) {
+        Logger.error(`Failed to start GUI server: ${(error as Error).message}`);
+        process.exit(1);
       }
     });
 
