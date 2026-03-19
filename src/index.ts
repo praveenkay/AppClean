@@ -108,7 +108,7 @@ async function handleListAll(detector: Detector): Promise<void> {
 
   try {
     const apps = await detector.searchApps({
-      installMethod: filterMethod || undefined,
+      installMethod: filterMethod as any || undefined,
       sortBy,
     });
 
