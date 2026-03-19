@@ -23,6 +23,7 @@ import {
   promptFinalConfirmation,
 } from './ui/prompts';
 import { Logger, formatBytes } from './utils/logger';
+import { UpgradeManager } from './utils/upgrade';
 import { InstalledApp } from './types';
 
 const VERSION = '1.8.0';
@@ -454,6 +455,61 @@ async function main(): Promise<void> {
         Logger.error(`Failed to start GUI server: ${(error as Error).message}`);
         process.exit(1);
       }
+    });
+
+  program
+    .command('upgrade')
+    .description('Upgrade AppClean to the latest version')
+    .action(async () => {
+      const upgradeManager = new UpgradeManager();
+
+      Logger.space();
+
+      try {
+        const result = await upgradeManager.upgrade();
+
+        if (result.success) {
+          Logger.success(result.message);
+        } else {
+          Logger.warn(result.message);
+        }
+      } catch (error) {
+        Logger.error(`Upgrade failed: ${(error as Error).message}`);
+        process.exit(1);
+      }
+
+      Logger.space();
+    });
+
+  program
+    .command('check-update')
+    .description('Check if a new version of AppClean is available')
+    .action(async () => {
+      const upgradeManager = new UpgradeManager();
+
+      Logger.space();
+
+      try {
+        const versionInfo = await upgradeManager.checkForUpdates();
+
+        Logger.info(`Current version: ${chalk.cyan(`v${versionInfo.current}`)}`);
+        Logger.info(`Latest version:  ${chalk.cyan(`v${versionInfo.latest}`)}`);
+
+        if (versionInfo.isUpdateAvailable) {
+          Logger.warn(
+            `A new version is available! Run ${chalk.bold('appclean upgrade')} to update.`
+          );
+        } else {
+          Logger.success('AppClean is up to date!');
+        }
+      } catch (error) {
+        Logger.error(
+          `Failed to check for updates: ${(error as Error).message}`
+        );
+        process.exit(1);
+      }
+
+      Logger.space();
     });
 
   program.on('command:*', () => {
