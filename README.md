@@ -330,12 +330,12 @@ MIT License © 2024
 
 ## 📄 License
 
-MIT License © 2024 [Praveen Kumar](https://github.com/praveenkay)
+MIT License © 2024 [Praveen Kothapally](https://github.com/praveenkay)
 
 ---
 
 **Built with care for developers and system administrators who value clean systems**
 
 <div align="center">
-  Made with ❤️ by <a href="https://github.com/praveenkay">Praveen Kumar</a>
+  Made with ❤️ by <a href="https://github.com/praveenkay">Praveen Kothapally</a>
 </div>
