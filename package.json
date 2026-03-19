@@ -24,7 +24,7 @@
     "package-manager",
     "cleanup"
   ],
-  "author": "Praveen Kumar <dev@praveen.dev>",
+  "author": "Praveen Kothapally <dev@praveenkothapally.dev>",
   "license": "MIT",
   "dependencies": {
     "chalk": "^4.1.2",

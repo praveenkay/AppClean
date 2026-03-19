@@ -330,7 +330,7 @@ MIT License © 2024
 
 ## 📄 License
 
-MIT License © 2024 [Praveen Kothapally](https://github.com/praveenkay)
+MIT License © 2026 [Praveen Kothapally](https://github.com/praveenkay)
 
 ---
 
