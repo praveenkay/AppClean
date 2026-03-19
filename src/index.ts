@@ -22,8 +22,9 @@ import {
   promptFinalConfirmation,
 } from './ui/prompts';
 import { Logger, formatBytes } from './utils/logger';
+import { InstalledApp } from './types';
 
-const VERSION = '1.0.0';
+const VERSION = '1.8.0';
 
 async function interactiveMode(): Promise<void> {
   showHeader();
@@ -108,7 +109,7 @@ async function handleListAll(detector: Detector): Promise<void> {
 
   try {
     const apps = await detector.searchApps({
-      installMethod: filterMethod as any || undefined,
+      installMethod: (filterMethod as any) || undefined,
       sortBy,
     });
 
@@ -144,7 +145,7 @@ async function handleListAll(detector: Detector): Promise<void> {
 }
 
 async function handleAppSelected(
-  app: any,
+  app: InstalledApp,
   detector: Detector
 ): Promise<void> {
   Logger.space();
@@ -185,7 +186,7 @@ async function handleAppSelected(
 }
 
 async function handleRemoveApp(
-  app: any,
+  app: InstalledApp,
   detector: Detector
 ): Promise<void> {
   const confirmed = await promptConfirmRemoval(app.name);
