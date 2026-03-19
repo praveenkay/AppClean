@@ -39,6 +39,8 @@ export interface RemovalOptions {
   createBackup?: boolean;
   backupPath?: string;
   force?: boolean;
+  userConsent?: boolean;
+  reportFormat?: 'html' | 'text';
 }
 
 export interface RemovalResult {
