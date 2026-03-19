@@ -1,24 +1,32 @@
-# AppClean
+<div align="center">
+  <img src="./logo.svg" alt="AppClean Logo" width="120" height="120">
 
-> A powerful, cross-platform CLI tool to intelligently find and safely uninstall applications with all their artifacts
+  # AppClean
 
-![version](https://img.shields.io/badge/version-1.0.0-blue)
-![license](https://img.shields.io/badge/license-MIT-green)
-![platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey)
+  > **Intelligently find and safely uninstall applications with all their artifacts**
 
-## Features
+  [![version](https://img.shields.io/badge/version-1.0.0-blue?style=flat-square)](https://github.com/praveenkay/AppClean/releases)
+  [![license](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
+  [![platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey?style=flat-square)](README.md)
+  [![npm](https://img.shields.io/npm/dm/appclean?style=flat-square)](https://npmjs.com/package/appclean)
 
-- 🔍 **Smart App Detection** - Finds apps installed via npm, yarn, pnpm, Homebrew, apt, yum, dnf, and custom installers
-- 📊 **Installation Method Identification** - Shows exactly how and where each app was installed
-- 🗂️ **Artifact Discovery** - Locates all related files including configs, caches, data files, and service files
-- 🗑️ **Safe Removal** - Completely removes applications with dry-run preview option
-- 💾 **Backup Support** - Create backups before deletion for peace of mind
-- 🔄 **Cross-Platform** - Works on macOS, Linux, and Windows
-- 🎯 **Interactive CLI** - Beautiful, intuitive menu-driven interface similar to Mole
+  **A powerful, cross-platform CLI tool for developers and system administrators**
 
-## Installation
+</div>
 
-### Via npm (Global)
+## ✨ Features
+
+- **🔍 Smart Detection** — Finds apps installed via npm, yarn, pnpm, Homebrew, apt, yum, dnf, and custom installers
+- **📊 Deep Analysis** — Shows installation method, version, and locates all related artifacts
+- **🛡️ Safe Removal** — Dry-run preview, double confirmation, and optional backups
+- **💾 Backup & Restore** — Create backups before deletion and restore if needed
+- **⚡ Fast & Efficient** — Scans and analyzes systems in seconds
+- **🖥️ Cross-Platform** — macOS (Intel & Apple Silicon), Linux, and Windows
+- **🎨 Beautiful CLI** — Interactive menu-driven interface with colors and animations
+
+## 🚀 Installation
+
+### Quick Install (npm)
 
 ```bash
 npm install -g appclean
@@ -27,47 +35,51 @@ npm install -g appclean
 ### From Source
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/appclean.git
-cd appclean
+git clone https://github.com/praveenkay/AppClean.git
+cd AppClean
 npm install
 npm run build
 npm install -g .
 ```
 
-## Quick Start
+**Requirements:** Node.js 16+ and npm 7+
+
+## 💻 Usage
 
 ### Interactive Mode
+
+Simply run:
 
 ```bash
 appclean
 ```
 
-This launches the interactive menu where you can:
-- Search for applications
-- Browse all installed apps
-- View detailed information about an app and its artifacts
-- Safely remove applications
+Then use arrow keys to navigate and select actions:
+- 🔍 Search for applications
+- 📋 List all installed apps
+- 📊 View app details and artifacts
+- 🗑️ Remove applications safely
 
-### Command-line Mode
+### Command Mode
 
 ```bash
 # Search for an app
-appclean search nodejs
+appclean search webpack
 
-# List all installed apps
+# List all applications
 appclean list
 
-# Analyze an app and show artifacts
-appclean analyze my-app
+# Analyze app artifacts before removal
+appclean analyze webpack
 
-# Remove an app (with preview)
-appclean remove my-app --dry-run
+# Preview removal (no files deleted)
+appclean remove webpack --dry-run
 
-# Remove an app (with backup)
-appclean remove my-app --backup
+# Remove with backup
+appclean remove webpack --backup
 
-# Remove an app (without confirmations)
-appclean remove my-app --force
+# Remove without confirmations
+appclean remove webpack --force
 ```
 
 ## Supported Package Managers
@@ -105,16 +117,16 @@ AppClean intelligently detects and removes applications by:
    - Double confirmation before final removal
    - Detailed error reporting
 
-## Examples
+## 📚 Examples
 
-### Find and Remove an npm Package
+### Interactive Search and Remove
 
 ```bash
-$ appclean search lodash
+$ appclean search webpack
 ℹ Found 1 app(s)
 
 ? Select an app to remove: (Use arrow keys)
-❯ lodash (npm) - v4.17.21
+❯ webpack (npm) - v5.89.0
 
 ? What would you like to do? (Use arrow keys)
 ❯ 📊 View details and artifacts
@@ -122,38 +134,54 @@ $ appclean search lodash
   ⬅️  Back to search
 ```
 
-### Remove with Backup
+### Preview Before Removal
 
 ```bash
-$ appclean remove myapp --backup
-ℹ App: myapp
-ℹ Method: npm
+$ appclean remove webpack --dry-run
 
-? Remove this app and all its artifacts? (y/N) y
+ℹ Files to be removed:
+  binary   512 B    /usr/local/bin/webpack
+  config   1.2 KB   ~/.config/webpack
+  cache    15 MB    ~/.cache/webpack
+  data     2.3 MB   ~/.local/share/webpack
+  log      512 B    ~/.local/share/log/webpack
 
-ℹ Removal options:
-? Select options:
-  ◉ Dry run (preview without removing)
-  ◯ Create backup before removal
+ℹ Total space to be freed: 17.5 MB
 
-✓ Successfully removed myapp (freed 2.5 MB)
-ℹ Backup saved at: ~/.appclean-backups/myapp-2024-01-15T10-30-45.tar.gz
+✓ This is a preview only. No files were removed.
 ```
 
-### List All Apps
+### Safe Removal with Backup
+
+```bash
+$ appclean remove webpack --backup
+
+ℹ App: webpack
+ℹ Method: npm
+ℹ Version: 5.89.0
+
+? This action cannot be undone. Remove webpack and all its files? (y/N) y
+
+✓ Backup created: ~/.appclean-backups/webpack-2024-01-20T15-30-45.tar.gz
+✓ Successfully removed webpack (freed 17.5 MB)
+```
+
+### List All Installed Apps
 
 ```bash
 $ appclean list
 ℹ Found 42 app(s)
 
-┌─────────────┬─────────┬────────────┐
-│    Name     │ Version │   Method   │
-├─────────────┼─────────┼────────────┤
-│   lodash    │ 4.17.21 │    npm     │
-│   webpack   │ 5.89.0  │    npm     │
-│    node     │  20.10  │   custom   │
-│    brew     │   4.1.6 │    brew    │
-└─────────────┴─────────┴────────────┘
+┌──────────────┬──────────┬──────────┐
+│     Name     │ Version  │ Method   │
+├──────────────┼──────────┼──────────┤
+│ webpack      │ 5.89.0   │ npm      │
+│ typescript   │ 5.3.3    │ npm      │
+│ lodash       │ 4.17.21  │ npm      │
+│ node         │ 20.10.0  │ custom   │
+│ git          │ 2.43.0   │ brew     │
+│ python       │ 3.11.7   │ system   │
+└──────────────┴──────────┴──────────┘
 ```
 
 ## Options
@@ -294,12 +322,20 @@ MIT License © 2024
 
 ⚠️ **Use with caution**: This tool permanently deletes files. Always use `--dry-run` first to preview changes.
 
-## Support
+## 🤝 Support & Community
 
-- 🐛 [Report a bug](https://github.com/YOUR_USERNAME/appclean/issues)
-- 💬 [Discuss ideas](https://github.com/YOUR_USERNAME/appclean/discussions)
-- ⭐ [Star us on GitHub](https://github.com/YOUR_USERNAME/appclean)
+- **🐛 [Report Issues](https://github.com/praveenkay/AppClean/issues)** — Found a bug? Let us know
+- **💬 [Discussions](https://github.com/praveenkay/AppClean/discussions)** — Share ideas and feedback
+- **⭐ [Star on GitHub](https://github.com/praveenkay/AppClean)** — Show your support
+
+## 📄 License
+
+MIT License © 2024 [Praveen Kumar](https://github.com/praveenkay)
 
 ---
 
-**Made with ❤️ for developers who want clean systems**
+**Built with care for developers and system administrators who value clean systems**
+
+<div align="center">
+  Made with ❤️ by <a href="https://github.com/praveenkay">Praveen Kumar</a>
+</div>

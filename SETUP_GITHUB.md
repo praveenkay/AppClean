@@ -23,16 +23,14 @@ This guide will help you create a new GitHub repository and push the AppClean pr
 
 ### 2. Add Remote and Push
 
-Copy the repository URL from GitHub, then run:
-
 ```bash
 cd /tmp/appclean
 
-# Add GitHub as remote (replace YOUR_USERNAME)
-git remote add origin https://github.com/YOUR_USERNAME/appclean.git
+# Add GitHub as remote
+git remote add origin https://github.com/praveenkay/AppClean.git
 
-# Rename branch to main (optional but recommended)
-git branch -m master main
+# Rename branch to main (if needed)
+git branch -m master main 2>/dev/null || true
 
 # Push to GitHub
 git push -u origin main

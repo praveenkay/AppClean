@@ -24,7 +24,7 @@
     "package-manager",
     "cleanup"
   ],
-  "author": "Your Name",
+  "author": "Praveen Kumar <dev@praveen.dev>",
   "license": "MIT",
   "dependencies": {
     "chalk": "^4.1.2",
@@ -49,10 +49,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/appclean.git"
+    "url": "https://github.com/praveenkay/AppClean.git"
   },
   "bugs": {
-    "url": "https://github.com/YOUR_USERNAME/appclean/issues"
+    "url": "https://github.com/praveenkay/AppClean/issues"
   },
-  "homepage": "https://github.com/YOUR_USERNAME/appclean#readme"
+  "homepage": "https://github.com/praveenkay/AppClean#readme"
 }

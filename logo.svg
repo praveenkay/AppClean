@@ -1,0 +1,60 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="256" cy="256" r="256" fill="#1F2937"/>
+
+  <!-- Inner Circle -->
+  <circle cx="256" cy="256" r="240" fill="#111827"/>
+
+  <!-- Gradient Definition -->
+  <defs>
+    <linearGradient id="gradientBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1E40AF;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="gradientGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10B981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Main Trash/Cleanup Icon -->
+  <!-- Trash can body -->
+  <path d="M 150 180 L 362 180 L 380 200 L 132 200 Z" fill="url(#gradientBlue)" opacity="0.9"/>
+
+  <!-- Trash can top/lid -->
+  <rect x="160" y="160" width="192" height="25" rx="4" fill="url(#gradientBlue)" opacity="0.7"/>
+
+  <!-- Handle -->
+  <path d="M 220 160 Q 220 140 256 140 Q 292 140 292 160" stroke="url(#gradientBlue)" stroke-width="12" fill="none" stroke-linecap="round"/>
+
+  <!-- Trash can container -->
+  <rect x="140" y="200" width="232" height="160" rx="8" fill="url(#gradientBlue)" opacity="0.8"/>
+
+  <!-- Checkmark (clean/success) - overlaid on trash -->
+  <g transform="translate(256, 280)">
+    <!-- Checkmark circle background -->
+    <circle cx="0" cy="0" r="55" fill="url(#gradientGreen)" opacity="0.95"/>
+
+    <!-- White checkmark -->
+    <path d="M -20 0 L -5 15 L 25 -20" stroke="white" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Decorative elements - removed items -->
+  <!-- Floating particles representing cleanup -->
+  <circle cx="100" cy="150" r="8" fill="#3B82F6" opacity="0.6"/>
+  <circle cx="412" cy="160" r="6" fill="#10B981" opacity="0.6"/>
+  <circle cx="110" cy="350" r="7" fill="#10B981" opacity="0.5"/>
+  <circle cx="400" cy="360" r="5" fill="#3B82F6" opacity="0.5"/>
+
+  <!-- Floating lines (particles dissolving) -->
+  <line x1="95" y1="140" x2="70" y2="110" stroke="#3B82F6" stroke-width="2" opacity="0.4"/>
+  <line x1="420" y1="180" x2="450" y2="150" stroke="#10B981" stroke-width="2" opacity="0.4"/>
+  <line x1="105" y1="370" x2="75" y2="400" stroke="#10B981" stroke-width="2" opacity="0.4"/>
+  <line x1="410" y1="375" x2="445" y2="410" stroke="#3B82F6" stroke-width="2" opacity="0.4"/>
+
+  <!-- Text: APPCLEAN -->
+  <text x="256" y="440" font-family="Inter, -apple-system, system-ui, sans-serif" font-size="32" font-weight="700" text-anchor="middle" fill="white" letter-spacing="-0.5">AppClean</text>
+
+  <!-- Tagline -->
+  <text x="256" y="470" font-family="Inter, -apple-system, system-ui, sans-serif" font-size="12" text-anchor="middle" fill="#9CA3AF" letter-spacing="0.5">Clean • Safe • Smart</text>
+</svg>
