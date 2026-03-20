@@ -8,6 +8,7 @@ import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { execFile, spawn, type ChildProcess } from 'child_process';
 import { Logger } from '../utils/logger.js';
 import { sendJson, sendError, parseQueryParams } from './server/middleware/errorHandler.js';
 import { handleAppRoutes } from './server/routes/apps.js';
@@ -22,6 +23,7 @@ export class GUIServer {
   private port: number = 3000;
   private server: any;
   private spaHtml: string | null = null;
+  private browserProcess: ChildProcess | null = null;
 
   constructor(port: number = 3000) {
     this.port = port;
@@ -41,9 +43,13 @@ export class GUIServer {
     });
 
     return new Promise((resolve) => {
-      this.server.listen(this.port, () => {
+      this.server.listen(this.port, async () => {
         Logger.success(`✨ AppClean GUI running at http://localhost:${this.port}`);
         Logger.info('Press Ctrl+C to stop the server');
+
+        // Open the default browser
+        await this.openBrowser();
+
         resolve();
       });
     });
@@ -53,9 +59,69 @@ export class GUIServer {
    * Stop GUI server
    */
   async stop(): Promise<void> {
+    // Close the browser
+    await this.closeBrowser();
+
     if (this.server) {
       this.server.close();
       Logger.info('GUI server stopped');
+    }
+  }
+
+  /**
+   * Open the default browser
+   */
+  private async openBrowser(): Promise<void> {
+    const url = `http://localhost:${this.port}`;
+
+    try {
+      const platform = process.platform;
+
+      if (platform === 'darwin') {
+        // macOS
+        this.browserProcess = execFile('open', [url]);
+      } else if (platform === 'win32') {
+        // Windows
+        this.browserProcess = execFile('cmd', ['/c', 'start', url]);
+      } else {
+        // Linux and other Unix-like systems
+        this.browserProcess = execFile('xdg-open', [url]);
+      }
+
+      this.browserProcess.on('error', (error) => {
+        Logger.warn(`Could not open browser: ${error.message}`);
+      });
+    } catch (error) {
+      Logger.warn(`Failed to open browser: ${(error as Error).message}`);
+    }
+  }
+
+  /**
+   * Close the browser
+   */
+  private async closeBrowser(): Promise<void> {
+    if (!this.browserProcess) {
+      return;
+    }
+
+    try {
+      const platform = process.platform;
+
+      if (platform === 'win32') {
+        // Windows: kill the process
+        if (this.browserProcess.pid) {
+          process.kill(this.browserProcess.pid, 'SIGTERM');
+        }
+      } else {
+        // macOS and Linux: kill the process
+        if (this.browserProcess.pid) {
+          process.kill(this.browserProcess.pid);
+        }
+      }
+
+      this.browserProcess = null;
+    } catch (error) {
+      Logger.debug(`Note: Could not close browser process: ${(error as Error).message}`);
     }
   }
 
