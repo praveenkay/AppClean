@@ -13,6 +13,7 @@ import { renderDashboard } from './pages/dashboard.js';
 import { renderAppSearch } from './pages/appSearch.js';
 import { renderAppDetails } from './pages/appDetails.js';
 import { renderSettings } from './pages/settings.js';
+import { renderHelp } from './pages/help.js';
 
 /**
  * Initialize the SPA
@@ -58,6 +59,11 @@ function registerRoutes(): void {
     uiStore.navigateTo('settings');
     renderSettings();
   }, 'AppClean - Settings');
+
+  router.register('help', () => {
+    uiStore.navigateTo('help');
+    renderHelp();
+  }, 'AppClean - Help');
 }
 
 /**

@@ -1,0 +1,26 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer Circle Background -->
+  <circle cx="100" cy="100" r="100" fill="#f0f7ff"/>
+
+  <!-- Inner Circle -->
+  <circle cx="100" cy="100" r="85" fill="#ffffff" stroke="#e0e7ff" stroke-width="2"/>
+
+  <!-- Broom Icon - Simple & Clean -->
+  <g>
+    <!-- Handle -->
+    <path d="M 100 40 L 100 110" stroke="#3b82f6" stroke-width="6" stroke-linecap="round"/>
+
+    <!-- Bristles - Simple fan shape -->
+    <path d="M 100 110 L 85 130" stroke="#3b82f6" stroke-width="5" stroke-linecap="round"/>
+    <path d="M 100 110 L 100 135" stroke="#3b82f6" stroke-width="5" stroke-linecap="round"/>
+    <path d="M 100 110 L 115 130" stroke="#3b82f6" stroke-width="5" stroke-linecap="round"/>
+    <path d="M 100 110 L 80 140" stroke="#3b82f6" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+    <path d="M 100 110 L 120 140" stroke="#3b82f6" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+  </g>
+
+  <!-- Checkmark Circle - Success indicator -->
+  <g>
+    <circle cx="140" cy="65" r="20" fill="#10b981" opacity="0.15"/>
+    <path d="M 135 65 L 138 68 L 145 60" stroke="#10b981" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

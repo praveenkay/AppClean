@@ -4,7 +4,7 @@
 
 import { Store } from '../utils/events.js';
 
-export type ViewType = 'dashboard' | 'apps' | 'app-details' | 'settings';
+export type ViewType = 'dashboard' | 'apps' | 'app-details' | 'settings' | 'help';
 export type NotificationType = 'success' | 'error' | 'warning' | 'info';
 export type ThemeType = 'light' | 'dark';
 

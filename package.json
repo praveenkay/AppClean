@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "tsc && npm run copy-assets",
-    "copy-assets": "mkdir -p dist/ui/client/styles && cp src/ui/client/index.html dist/ui/client/ && cp src/ui/client/styles/*.css dist/ui/client/styles/",
+    "copy-assets": "mkdir -p dist/ui/client/assets && cp src/ui/client/index.html dist/ui/client/ && cp src/ui/client/assets/*.svg dist/ui/client/assets/",
     "dev": "ts-node src/index.ts",
     "start": "node dist/index.js",
     "test": "jest",
