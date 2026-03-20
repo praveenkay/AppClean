@@ -26,7 +26,7 @@ import { Logger, formatBytes } from './utils/logger.js';
 import { UpgradeManager } from './utils/upgrade.js';
 import { InstalledApp } from './types';
 
-const VERSION = '2.0.1';
+const VERSION = '2.0.2';
 
 async function interactiveMode(): Promise<void> {
   showHeader();

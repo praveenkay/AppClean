@@ -1,5 +1,8 @@
 import { execSync } from 'child_process';
 import { Logger } from './logger.js';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
 export interface VersionInfo {
   current: string;
@@ -9,7 +12,21 @@ export interface VersionInfo {
 
 export class UpgradeManager {
   private readonly packageName = 'appclean';
-  private readonly currentVersion = '1.9.0';
+  private currentVersion: string;
+
+  constructor() {
+    // Dynamically read version from package.json
+    try {
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = dirname(__filename);
+      const packagePath = join(__dirname, '../../package.json');
+      const packageData = JSON.parse(readFileSync(packagePath, 'utf-8'));
+      this.currentVersion = packageData.version || '2.0.0';
+    } catch (error) {
+      Logger.debug('Failed to read version from package.json, using fallback');
+      this.currentVersion = '2.0.0';
+    }
+  }
 
   /**
    * Get version information from npm registry
