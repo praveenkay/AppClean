@@ -9,7 +9,7 @@ export interface VersionInfo {
 
 export class UpgradeManager {
   private readonly packageName = 'appclean';
-  private readonly currentVersion = '1.8.0';
+  private readonly currentVersion = '1.9.0';
 
   /**
    * Get version information from npm registry
