@@ -1,0 +1,388 @@
+/* ============================================================================
+   Responsive Design - Mobile, Tablet, Desktop
+   ============================================================================ */
+
+/* ============================================================================
+   Mobile First (0px - 640px)
+   ============================================================================ */
+
+@media (max-width: 640px) {
+  :root {
+    --sidebar-width: 16rem;
+    --header-height: 3.5rem;
+  }
+
+  /* Header Adjustments */
+  .header-container {
+    padding: 0 var(--space-3);
+  }
+
+  .sidebar-toggle {
+    display: flex;
+  }
+
+  .logo-text {
+    display: none;
+  }
+
+  .header-actions {
+    gap: var(--space-2);
+  }
+
+  /* Sidebar Adjustments */
+  .sidebar {
+    width: 100%;
+    max-width: 80%;
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-overlay {
+    display: block;
+  }
+
+  .sidebar-overlay.active {
+    opacity: 1;
+  }
+
+  /* Main Content Adjustments */
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .content-wrapper {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  /* Typography Adjustments */
+  h1 {
+    font-size: var(--font-2xl);
+  }
+
+  h2 {
+    font-size: var(--font-xl);
+  }
+
+  h3 {
+    font-size: var(--font-lg);
+  }
+
+  /* Grid Adjustments */
+  .grid-cols-2,
+  .grid-cols-3,
+  .grid-cols-4 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  /* Card Adjustments */
+  .card {
+    margin-bottom: var(--space-4);
+  }
+
+  /* Modal Adjustments */
+  .modal-dialog {
+    width: 95%;
+    border-radius: var(--radius-xl);
+  }
+
+  /* Notification Adjustments */
+  .notifications-container {
+    right: var(--space-2);
+    left: var(--space-2);
+    width: auto;
+  }
+
+  .notification {
+    width: 100%;
+  }
+
+  /* Button Adjustments */
+  .btn {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--font-sm);
+  }
+
+  /* Table Adjustments */
+  table {
+    font-size: var(--font-sm);
+  }
+
+  th,
+  td {
+    padding: var(--space-2) var(--space-3);
+  }
+
+  /* Form Adjustments */
+  input,
+  textarea,
+  select {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  /* Flexbox Adjustments */
+  .flex-reverse {
+    flex-direction: column-reverse;
+  }
+
+  /* Hide Elements on Mobile */
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+/* ============================================================================
+   Small Tablet (641px - 768px)
+   ============================================================================ */
+
+@media (min-width: 641px) and (max-width: 768px) {
+  .grid-cols-3,
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sidebar {
+    width: var(--sidebar-width);
+    transform: translateX(0);
+  }
+
+  .sidebar-toggle {
+    display: flex;
+  }
+
+  .logo-text {
+    display: none;
+  }
+
+  .main-content {
+    margin-left: var(--sidebar-width);
+  }
+
+  .sidebar-overlay {
+    display: none;
+  }
+
+  .content-wrapper {
+    padding: var(--space-6) var(--space-4);
+  }
+}
+
+/* ============================================================================
+   Tablet & Large Devices (769px - 1024px)
+   ============================================================================ */
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hide-tablet {
+    display: none !important;
+  }
+
+  .show-tablet {
+    display: block !important;
+  }
+}
+
+/* ============================================================================
+   Desktop & Larger (1025px+)
+   ============================================================================ */
+
+@media (min-width: 1025px) {
+  .hide-desktop {
+    display: none !important;
+  }
+
+  .show-desktop {
+    display: block !important;
+  }
+}
+
+/* ============================================================================
+   Large Desktop (1536px+)
+   ============================================================================ */
+
+@media (min-width: 1536px) {
+  :root {
+    --sidebar-width: 18rem;
+  }
+
+  .max-content-xl {
+    max-width: var(--max-width-2xl);
+  }
+}
+
+/* ============================================================================
+   Landscape Orientation
+   ============================================================================ */
+
+@media (orientation: landscape) {
+  body {
+    overflow-x: auto;
+  }
+
+  :root {
+    --header-height: 3rem;
+  }
+}
+
+/* ============================================================================
+   High DPI / Retina Displays
+   ============================================================================ */
+
+@media (min-resolution: 2dppx) {
+  img {
+    image-rendering: -webkit-optimize-contrast;
+  }
+
+  .logo-image {
+    image-rendering: -webkit-optimize-contrast;
+  }
+}
+
+/* ============================================================================
+   Touch Devices
+   ============================================================================ */
+
+@media (hover: none) and (pointer: coarse) {
+  button,
+  a {
+    padding: var(--space-3);
+    min-height: 44px;
+  }
+
+  .btn-icon {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Increase touch targets */
+  .nav-item {
+    padding: var(--space-4);
+  }
+}
+
+/* ============================================================================
+   Print Media
+   ============================================================================ */
+
+@media print {
+  .app-header,
+  .sidebar,
+  .sidebar-overlay,
+  .header-actions,
+  .notifications-container,
+  .btn,
+  button {
+    display: none !important;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+
+  .content-wrapper {
+    padding: 0;
+  }
+
+  body {
+    background: white;
+  }
+
+  .page-container {
+    max-width: 100%;
+  }
+}
+
+/* ============================================================================
+   Reduced Motion
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================================
+   Dark Mode Media Query
+   ============================================================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: var(--dark-bg-primary);
+    --bg-secondary: var(--dark-bg-secondary);
+    --text-primary: var(--dark-text-primary);
+    --text-secondary: var(--dark-text-secondary);
+  }
+}
+
+/* ============================================================================
+   Light Mode Media Query
+   ============================================================================ */
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg-primary: var(--color-neutral-0);
+    --bg-secondary: var(--color-neutral-50);
+    --text-primary: var(--color-neutral-900);
+    --text-secondary: var(--color-neutral-600);
+  }
+}
+
+/* ============================================================================
+   iPad & Safari Specific Fixes
+   ============================================================================ */
+
+@supports (-webkit-touch-callout: none) {
+  /* iOS specific adjustments */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  textarea {
+    font-size: 16px;
+    border-radius: 0;
+  }
+
+  select {
+    font-size: 16px;
+  }
+
+  body {
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  input,
+  textarea,
+  select {
+    -webkit-user-select: text;
+  }
+
+  .sidebar {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ============================================================================
+   Container Queries (When supported)
+   ============================================================================ */
+
+@supports (container-type: inline-size) {
+  .card-grid {
+    container-type: inline-size;
+  }
+
+  @container (max-width: 300px) {
+    .card-grid > * {
+      grid-template-columns: 1fr;
+    }
+  }
+}
