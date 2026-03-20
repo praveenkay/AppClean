@@ -35,7 +35,7 @@ chore: Update dependencies
 
 ### Important Notes
 
-- **DO NOT** include tool attribution in commit messages (e.g., "Generated with Claude")
+- **DO NOT** include tool attribution in commit messages
 - **DO NOT** add "Co-Authored-By" lines unless there are actual human co-authors
 - Keep commit messages clear and focused
 - Use imperative mood ("Add" not "Added")
@@ -49,7 +49,7 @@ To test:
 ```bash
 git commit -m "fix: Some fix
 
-Generated with Claude"  # This will be rejected
+Tool Attribution Line"  # This will be rejected
 ```
 
 ## Repository History
