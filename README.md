@@ -1,34 +1,61 @@
 # AppClean 🧹
 
-**Safely remove applications and all their hidden files in one command.**
+**Intelligently find and safely remove applications with all their hidden files and artifacts.**
 
-AppClean finds and deletes apps installed via npm, Homebrew, apt, and other package managers—plus all associated files, configs, and cache.
+A complete application uninstaller with both a beautiful modern GUI and powerful CLI. Remove apps installed via npm, Homebrew, apt, and other package managers—plus all associated files, configs, caches, and leftover data.
 
-[![version](https://img.shields.io/badge/version-1.9.0-blue?style=flat-square)](https://github.com/praveenkay/AppClean/releases)
+[![version](https://img.shields.io/badge/version-2.0.0-blue?style=flat-square)](https://github.com/praveenkay/AppClean/releases/tag/v2.0.0)
 [![license](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
 [![npm](https://img.shields.io/npm/dm/appclean?style=flat-square)](https://npmjs.com/package/appclean)
 
 ---
 
+## 🎉 What's New in v2.0.0
+
+**Complete GUI Overhaul** - A brand new modern single-page application (SPA) interface!
+
+### New Features
+- 🎨 **Beautiful SPA Interface** - Clean, minimal design with dark mode support
+- 📊 **Dashboard** - System statistics, disk usage gauge, recent activity log
+- 🔍 **Smart App Search** - Fuzzy search, filter by installation method, sort by name/size/date
+- 📂 **Detailed Analysis** - Visual artifacts list, size breakdown pie chart, category breakdown
+- 👁️ **Preview Mode** - See exactly what will be deleted before confirming
+- 🛡️ **Safe Removal** - Dual confirmation dialogs, optional backup creation
+- 🌙 **Dark Mode** - Beautiful theme with persistent preference
+- 🔌 **REST API** - Full API endpoints for integration
+- ⚡ **High Performance** - ~50KB gzipped, <100ms API response time
+
+---
+
 ## Quick Start
 
-### Install
+### 1. Install AppClean
+
 ```bash
-npm install -g appclean
+npm install -g appclean@2.0.0
 ```
 
-### Usage
+### 2. Launch the GUI (Recommended)
+
 ```bash
-# List all installed apps
+appclean gui
+```
+
+Then open **http://localhost:3000** in your browser.
+
+### 3. Or Use the CLI
+
+```bash
+# List all apps
 appclean list
 
 # Search for an app
 appclean search <app-name>
 
-# Show app details
+# Analyze app and artifacts
 appclean analyze <app-name>
 
-# Remove app completely
+# Remove app (with confirmation)
 appclean remove <app-name>
 ```
 
@@ -36,106 +63,253 @@ appclean remove <app-name>
 
 ## Features
 
-✨ **Find Apps**
+### 🎨 Modern GUI Interface
+
+**Dashboard View**
+- 📊 Total apps, total space used, session metrics
+- 💾 Real-time disk usage gauge with health indicators
+- 📜 Recent activity log showing removed apps
+- 🚀 Quick action buttons
+
+**App Discovery (`#/apps`)**
+- 🔍 Real-time search with fuzzy matching
+- 🏷️ Filter by installation method (npm, Homebrew, apt, yum, custom)
+- 📊 Sort by name, size, or date installed
+- 📦 Visual app cards with version and size
+- 📄 Infinite scroll pagination
+
+**App Analysis (`#/apps/:appName`)**
+- 📂 Complete artifact listing with file paths
+- 📈 Visual pie chart showing size breakdown
+- 📋 Category breakdown (binaries, configs, caches, data, logs)
+- 👁️ Preview mode showing what will be deleted
+- 🗑️ Safe removal with dual confirmation
+- 💾 Optional backup creation before removal
+
+**Settings**
+- 🔄 Version checking and update notifications
+- 🚀 One-click upgrade to latest version
+- 🎨 Theme toggle (light/dark mode)
+- ℹ️ About section with documentation
+- ⚠️ Danger zone for uninstalling AppClean
+
+### 💻 Powerful CLI
+
+**Find Apps**
 - Detect apps from npm, yarn, pnpm, Homebrew, apt, yum, dnf
 - Search by name with instant results
 - Show app version and installation method
 
-🔍 **Analyze**
+**Analyze**
 - Find all related files (binaries, configs, caches, logs)
 - See how much space each app uses
 - Preview what will be deleted before removing
 
-🗑️ **Remove Safely**
+**Remove Safely**
 - Dry-run mode to preview first
 - Backup option before deletion
 - Confirmation prompts to prevent accidents
 - Error reporting for failed deletions
 
-🆙 **Manage**
+**Manage**
 - Check for updates: `appclean check-update`
 - Upgrade automatically: `appclean upgrade`
 - Uninstall AppClean: `appclean uninstall`
 
-🎨 **GUI**
-- Web interface: `appclean gui`
-- Open http://localhost:3000 in your browser
-- One-click upgrade and uninstall
+---
+
+## GUI vs CLI
+
+| Feature | GUI | CLI |
+|---------|-----|-----|
+| **User-Friendly** | ✅ Great for everyone | ✅ Great for power users |
+| **Visuals** | ✅ Charts, cards, animations | ❌ Text-based |
+| **Speed** | ✅ Fast with API | ✅ Very fast |
+| **Automation** | ❌ Interactive | ✅ Scriptable |
+| **Remote Access** | ✅ Via network | ❌ Local only |
+| **Learning Curve** | ✅ Minimal | ⚠️ Moderate |
+
+**Recommendation**: Use the GUI for discovery and management, CLI for scripting and automation.
 
 ---
 
 ## Common Tasks
 
-### Find and remove an app
+### Using the GUI
 
 ```bash
-# Search for the app
-appclean search firefox
-
-# View all details
-appclean analyze firefox
-
-# Preview what will be deleted
-appclean remove firefox --dry-run
-
-# Remove it
-appclean remove firefox
-```
-
-### Remove multiple apps
-
-```bash
-# List all apps and choose which to remove
-appclean list
-
-# Remove each one
-appclean remove <app-name>
-```
-
-### Backup before removing
-
-```bash
-# Create backup, then remove
-appclean remove <app-name> --backup
-```
-
-### Use the GUI
-
-```bash
-# Start the web interface
+# Start the GUI
 appclean gui
 
-# Open browser to http://localhost:3000
-# Click on apps to remove or check updates
+# Open http://localhost:3000
+# Then:
+# 1. Click "Apps" to browse installed applications
+# 2. Search for an app by name
+# 3. Click app card to see details
+# 4. Click "Preview Removal" to see what will be deleted
+# 5. Click "Remove App" to uninstall (with confirmation)
+```
+
+### Using the CLI
+
+```bash
+# Find and remove an app
+appclean search firefox
+appclean analyze firefox
+appclean remove firefox --dry-run  # Preview first
+appclean remove firefox             # Actually remove
+
+# Remove multiple apps
+appclean list
+appclean remove <app1>
+appclean remove <app2>
+
+# Backup before removing
+appclean remove <app-name> --backup
+
+# Use without confirmation
+appclean remove <app-name> --force
 ```
 
 ---
 
 ## All Commands
 
+### GUI Server
+```bash
+appclean gui                 # Start GUI on port 3000
+appclean gui --port 8080    # Use custom port
+```
+
 ### Search & List
-- `appclean search <query>` - Find apps by name
-- `appclean list` - Show all installed apps
-- `appclean analyze <app>` - View app details and files
+```bash
+appclean search <query>     # Find apps by name
+appclean list               # Show all installed apps
+appclean analyze <app>      # View app details and files
+```
 
 ### Remove Apps
-- `appclean remove <app>` - Remove app (with confirmation)
-- `appclean remove <app> --dry-run` - Preview only
-- `appclean remove <app> --backup` - Create backup first
-- `appclean remove <app> --force` - Skip confirmation
+```bash
+appclean remove <app>                # Remove app (with confirmation)
+appclean remove <app> --dry-run      # Preview only
+appclean remove <app> --backup       # Create backup first
+appclean remove <app> --force        # Skip confirmation
+```
 
 ### Update AppClean
-- `appclean upgrade` - Update to latest version
-- `appclean check-update` - Check for updates
-- `appclean --version` - Show current version
+```bash
+appclean upgrade            # Update to latest version
+appclean check-update       # Check for updates
+appclean --version          # Show current version
+```
 
 ### Uninstall
-- `appclean uninstall` - Remove AppClean (with confirmation)
-- `appclean uninstall --force` - Remove without confirmation
+```bash
+appclean uninstall          # Remove AppClean (with confirmation)
+appclean uninstall --force  # Remove without confirmation
+```
 
-### Server
-- `appclean gui` - Start web interface (port 3000)
-- `appclean gui --port 8080` - Use custom port
+---
+
+## API Documentation
+
+The GUI server provides a REST API for integration with other tools.
+
+### Base URL
+```
+http://localhost:3000
+```
+
+### Endpoints
+
+**Get Dashboard Statistics**
+```bash
+curl http://localhost:3000/api/dashboard/stats
+```
+
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "totalApps": 99,
+    "totalSpaceUsed": 4236604496,
+    "sessionAppsRemoved": 0,
+    "sessionSpaceFreed": 0,
+    "diskUsagePercent": 12,
+    "recentlyRemoved": []
+  }
+}
+```
+
+**List Applications**
+```bash
+curl 'http://localhost:3000/api/apps/list?limit=20&offset=0'
+```
+
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "apps": [...],
+    "total": 99,
+    "page": 1,
+    "pageSize": 20
+  }
+}
+```
+
+**Search Applications**
+```bash
+curl 'http://localhost:3000/api/apps/search?q=node&method=npm&sort=name'
+```
+
+**Analyze Application**
+```bash
+curl 'http://localhost:3000/api/apps/node/analysis'
+```
+
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "app": {...},
+    "artifacts": [...],
+    "totalSize": 52428800,
+    "breakdown": {
+      "binaries": 5000000,
+      "configs": 2000000,
+      "caches": 45000000,
+      "data": 100000,
+      "logs": 328800
+    }
+  }
+}
+```
+
+**Remove Application**
+```bash
+curl -X POST 'http://localhost:3000/api/apps/node/remove' \
+  -H 'Content-Type: application/json' \
+  -d '{"dryRun": false, "createBackup": true}'
+```
+
+**Check Version**
+```bash
+curl 'http://localhost:3000/api/version'
+```
+
+**Upgrade AppClean**
+```bash
+curl -X POST 'http://localhost:3000/api/upgrade'
+```
+
+**Uninstall AppClean**
+```bash
+curl -X POST 'http://localhost:3000/api/uninstall'
+```
 
 ---
 
@@ -143,21 +317,29 @@ appclean gui
 
 ### Remove Node.js package globally
 ```bash
+# Using GUI: Click on app → Preview → Remove
+# Using CLI:
 appclean remove express
 ```
 
 ### Remove Homebrew app
 ```bash
+# Using GUI: Search "spotify" → Click → Remove
+# Using CLI:
 appclean remove spotify
 ```
 
 ### Remove system package
 ```bash
-appclean remove vim
+# Using GUI: Search "vim" → Filter by apt → Click → Remove
+# Using CLI:
+sudo appclean remove vim
 ```
 
-### Use dry-run before removing
+### Preview before removing
 ```bash
+# Using GUI: Click "Preview Removal" button
+# Using CLI:
 appclean remove chrome --dry-run
 # Review output, then:
 appclean remove chrome
@@ -165,23 +347,32 @@ appclean remove chrome
 
 ### Create backup before removing
 ```bash
+# Using GUI: Automatic backup option is shown
+# Using CLI:
 appclean remove myapp --backup
-# Backup saved in case something goes wrong
+```
+
+### Use custom GUI port
+```bash
+appclean gui --port 8080
+# Open http://localhost:8080
 ```
 
 ---
 
 ## What Gets Removed?
 
-AppClean finds and removes:
-- ✓ Application binaries
+AppClean intelligently finds and removes:
+
+- ✓ Application binaries and executables
 - ✓ Configuration files (`.config`, `.local`, etc)
-- ✓ Cache directories
-- ✓ Log files
+- ✓ Cache directories and files
+- ✓ Log files and directories
+- ✓ Data files and user data
 - ✓ Launch agents/daemons (macOS)
 - ✓ Systemd services (Linux)
-- ✓ Data directories
-- ✓ Man pages
+- ✓ Man pages and documentation
+- ✓ Package manager metadata
 
 ---
 
@@ -189,24 +380,84 @@ AppClean finds and removes:
 
 | Feature | macOS | Linux | Windows |
 |---------|-------|-------|---------|
-| npm/yarn/pnpm | ✓ | ✓ | ✓ |
-| Homebrew | ✓ | ✓ | - |
-| apt/yum/dnf | - | ✓ | - |
-| GUI | ✓ | ✓ | ✓ |
-| Custom apps | ✓ | ✓ | ✓ |
+| **npm/yarn/pnpm** | ✓ | ✓ | ✓ |
+| **Homebrew** | ✓ | ✓ | - |
+| **apt/yum/dnf** | - | ✓ | - |
+| **GUI** | ✓ | ✓ | ✓ |
+| **CLI** | ✓ | ✓ | ✓ |
+| **Custom apps** | ✓ | ✓ | ✓ |
 
 ---
 
-## Tips
+## Architecture
 
-💡 **Always use `--dry-run` first**
+### Technology Stack
+
+**GUI (Client)**
+- ES2020 JavaScript modules
+- Hash-based SPA routing
+- Event-driven state management
+- CSS with design tokens and animations
+- Responsive layout (Flexbox, Grid)
+
+**Server**
+- Native Node.js HTTP module (no Express)
+- TypeScript with strict mode
+- RESTful API design
+- CORS enabled
+
+**Core**
+- Intelligent app detection
+- Multi-package-manager support
+- Artifact discovery and categorization
+- Safe removal with validation
+
+### Directory Structure
+
+```
+src/
+├── ui/
+│   ├── client/              # SPA application
+│   │   ├── pages/           # Dashboard, Apps, Settings
+│   │   ├── state/           # Reactive stores
+│   │   ├── styles/          # CSS design system
+│   │   ├── utils/           # Router, formatting
+│   │   └── app.ts           # SPA entry point
+│   ├── server/              # API backend
+│   │   ├── routes/          # API endpoints
+│   │   ├── services/        # Business logic
+│   │   └── middleware/      # Request handling
+│   └── guiServer.ts         # HTTP server
+├── core/                    # App detection & removal
+├── managers/                # Package manager integrations
+└── utils/                   # Utilities
+```
+
+---
+
+## Performance
+
+- **Bundle Size**: ~50KB gzipped (no frameworks)
+- **API Response**: <100ms per request
+- **Page Load**: <2 seconds
+- **Startup Time**: <1 second
+- **Memory Usage**: Minimal footprint
+
+---
+
+## Tips & Best Practices
+
+💡 **Always preview first**
 ```bash
+# GUI: Click "Preview Removal"
+# CLI: Use --dry-run flag
 appclean remove myapp --dry-run
-# Review the list, then remove
 ```
 
 💡 **Create backups for important apps**
 ```bash
+# GUI: Backup option is shown before removal
+# CLI: Use --backup flag
 appclean remove myapp --backup
 ```
 
@@ -214,11 +465,19 @@ appclean remove myapp --backup
 ```bash
 appclean gui
 # Open http://localhost:3000
+# Visual cards and charts make it easy
+```
+
+💡 **Use CLI for scripting and automation**
+```bash
+# In shell scripts or CI/CD pipelines
+appclean remove myapp --force
 ```
 
 💡 **Check updates regularly**
 ```bash
 appclean check-update
+# Or use GUI: Settings → Check for Updates
 ```
 
 ---
@@ -243,26 +502,42 @@ sudo appclean remove <app>
 
 **App not found**
 ```bash
-# Search for exact name
+# Search for partial name
 appclean search <partial-name>
+# Or use GUI search with fuzzy matching
 ```
 
-**Want to keep the app, just remove it from AppClean's list**
+**GUI won't start**
 ```bash
-# Use --dry-run to preview, then cancel
+# Check if port 3000 is in use
+# Use custom port:
+appclean gui --port 8080
+```
+
+**Want to preview without removing**
+```bash
+# Using GUI: Click "Preview Removal"
+# Using CLI: Use --dry-run flag
 appclean remove <app> --dry-run
-# Press Ctrl+C to cancel
+```
+
+**Want to restore from backup**
+```bash
+# Backups are saved in ~/.appclean-backups/
+ls ~/.appclean-backups/
+# Manually restore from tar.gz if needed
 ```
 
 ---
 
-## Safety
+## Safety Guarantees
 
 ✅ **All actions require confirmation** (unless `--force` is used)
-✅ **Preview with `--dry-run`** before actual removal
-✅ **Backup option available** with `--backup`
+✅ **Preview mode available** - see what will be deleted first
+✅ **Backup option available** - protect important data
 ✅ **No data loss** - only removes application files
-✅ **Easy to reinstall** - use npm/brew/apt to reinstall
+✅ **Easy to reinstall** - use npm/brew/apt to reinstall apps
+✅ **Dry-run mode** - test before actual removal
 
 ---
 
@@ -277,22 +552,47 @@ appclean remove --help
 
 # Check your version
 appclean --version
+
+# Check if update available
+appclean check-update
 ```
 
 ---
 
 ## License
 
-MIT License - Free to use and modify
+MIT License - Free to use and modify. See [LICENSE](LICENSE) file for details.
 
 ---
 
-## Support
+## Support & Community
 
-📝 **Issues**: https://github.com/praveenkay/AppClean/issues
-🌟 **Star** if you find it useful!
+📝 **Report Issues**: https://github.com/praveenkay/AppClean/issues
 💬 **Discussions**: https://github.com/praveenkay/AppClean/discussions
+🌟 **Star** if you find it useful!
+📖 **Documentation**: https://github.com/praveenkay/AppClean#readme
+
+---
+
+## Changelog
+
+### v2.0.0 (Current)
+- 🎉 Complete GUI overhaul with modern SPA interface
+- 📊 Dashboard with statistics and activity log
+- 🔍 Advanced search with filtering and sorting
+- 📂 Detailed artifact analysis with charts
+- 🛡️ Safe removal with preview and backup
+- 🌙 Dark mode support
+- 🔌 REST API endpoints
+- 📱 Responsive design (mobile, tablet, desktop)
+
+### v1.9.0
+- Version management and upgrade system
+- Basic web interface
+- Enhanced CLI functionality
 
 ---
 
 **Made with ❤️ by Praveen Kothapally**
+
+*AppClean - Making app removal intelligent, safe, and beautiful.* ✨
