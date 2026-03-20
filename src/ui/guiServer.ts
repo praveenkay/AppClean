@@ -62,6 +62,8 @@ export class GUIServer {
         await this.handleVersionCheck(res);
       } else if (url === '/api/upgrade') {
         await this.handleUpgrade(res);
+      } else if (url === '/api/uninstall') {
+        await this.handleUninstall(res);
       } else {
         res.writeHead(404, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'API endpoint not found' }));
@@ -89,6 +91,18 @@ export class GUIServer {
    */
   private async handleUpgrade(res: ServerResponse): Promise<void> {
     const result = await this.upgradeManager.upgrade();
+
+    res.writeHead(result.success ? 200 : 500, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify(result));
+  }
+
+  /**
+   * Handle uninstall request
+   */
+  private async handleUninstall(res: ServerResponse): Promise<void> {
+    const result = await this.upgradeManager.uninstall();
 
     res.writeHead(result.success ? 200 : 500, {
       'Content-Type': 'application/json',
@@ -271,6 +285,94 @@ export class GUIServer {
       margin-left: 20px;
       margin-top: 10px;
     }
+    .danger-zone {
+      background: #fee2e2;
+      border-left: 4px solid #dc2626;
+      padding: 20px;
+      border-radius: 4px;
+      margin-top: 30px;
+    }
+    .danger-zone h3 {
+      color: #991b1b;
+      margin-top: 0;
+    }
+    .danger-zone p {
+      color: #7c2d12;
+      margin-bottom: 15px;
+    }
+    .btn-danger {
+      background: #dc2626;
+      color: white;
+    }
+    .btn-danger:hover {
+      background: #b91c1c;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(220, 38, 38, 0.4);
+    }
+    .btn-danger:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+      background-color: white;
+      margin: auto;
+      padding: 30px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .modal-content h2 {
+      color: #dc2626;
+      margin-bottom: 15px;
+    }
+    .modal-content p {
+      color: #666;
+      margin-bottom: 20px;
+    }
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+    .modal-buttons button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .modal-buttons .btn-cancel {
+      background: #e5e7eb;
+      color: #333;
+    }
+    .modal-buttons .btn-cancel:hover {
+      background: #d1d5db;
+    }
+    .modal-buttons .btn-confirm {
+      background: #dc2626;
+      color: white;
+    }
+    .modal-buttons .btn-confirm:hover {
+      background: #b91c1c;
+    }
   </style>
 </head>
 <body>
@@ -318,6 +420,35 @@ export class GUIServer {
         <li>📈 Real-time removal progress</li>
         <li>📋 Interactive report viewer</li>
       </ul>
+    </div>
+
+    <div class="danger-zone">
+      <h3>⚠️ Danger Zone</h3>
+      <p>
+        Uninstall AppClean from your system. This action will remove the application and
+        all its global files. This cannot be undone easily.
+      </p>
+      <div class="button-group">
+        <button class="btn-danger" onclick="showUninstallConfirm()">🗑️ Uninstall AppClean</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Uninstall Confirmation Modal -->
+  <div id="uninstallModal" class="modal">
+    <div class="modal-content">
+      <h2>⚠️ Confirm Uninstall</h2>
+      <p>
+        Are you sure you want to uninstall AppClean? This action will remove the application
+        from your system and cannot be easily undone.
+      </p>
+      <p style="color: #dc2626; font-weight: 600;">
+        This action cannot be undone!
+      </p>
+      <div class="modal-buttons">
+        <button class="btn-cancel" onclick="closeUninstallConfirm()">Cancel</button>
+        <button class="btn-confirm" onclick="confirmUninstall()">Uninstall</button>
+      </div>
     </div>
   </div>
 
@@ -386,6 +517,54 @@ export class GUIServer {
         statusEl.textContent = '✗ Upgrade failed: ' + error.message;
         statusEl.className = 'status-message status-error';
         upgradeBtn.disabled = false;
+      }
+    }
+
+    // Uninstall Functions
+    function showUninstallConfirm() {
+      document.getElementById('uninstallModal').style.display = 'block';
+    }
+
+    function closeUninstallConfirm() {
+      document.getElementById('uninstallModal').style.display = 'none';
+    }
+
+    async function confirmUninstall() {
+      const modal = document.getElementById('uninstallModal');
+      const btn = modal.querySelector('.btn-confirm');
+
+      btn.disabled = true;
+      btn.textContent = '🗑️ Uninstalling...';
+
+      try {
+        const response = await fetch('/api/uninstall');
+        const data = await response.json();
+
+        if (data.success) {
+          modal.querySelector('p').textContent = '✓ ' + data.message;
+          modal.querySelector('h2').textContent = '✓ Uninstall Complete';
+          modal.querySelector('.modal-buttons').innerHTML =
+            '<button class="btn-cancel" onclick="window.close()">Close</button>';
+          setTimeout(() => {
+            alert('AppClean has been uninstalled. You can close this window.');
+          }, 500);
+        } else {
+          alert('❌ Uninstall failed: ' + data.message);
+          btn.disabled = false;
+          btn.textContent = 'Uninstall';
+        }
+      } catch (error) {
+        alert('❌ Error: ' + error.message);
+        btn.disabled = false;
+        btn.textContent = 'Uninstall';
+      }
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById('uninstallModal');
+      if (event.target === modal) {
+        modal.style.display = 'none';
       }
     }
   </script>

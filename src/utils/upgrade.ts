@@ -115,4 +115,29 @@ export class UpgradeManager {
   async checkForUpdates(): Promise<VersionInfo> {
     return this.getVersionInfo();
   }
+
+  /**
+   * Uninstall AppClean from the system
+   */
+  async uninstall(): Promise<{ success: boolean; message: string }> {
+    try {
+      Logger.info('Uninstalling AppClean...');
+
+      // Uninstall global npm package
+      execSync(`npm uninstall -g ${this.packageName}`, {
+        stdio: 'inherit',
+      });
+
+      return {
+        success: true,
+        message: `AppClean has been successfully uninstalled from your system.`,
+      };
+    } catch (error) {
+      const errorMsg = (error as Error).message;
+      return {
+        success: false,
+        message: `Uninstall failed: ${errorMsg}`,
+      };
+    }
+  }
 }

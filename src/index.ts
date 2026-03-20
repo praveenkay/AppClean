@@ -512,6 +512,45 @@ async function main(): Promise<void> {
       Logger.space();
     });
 
+  program
+    .command('uninstall')
+    .description('Uninstall AppClean from your system')
+    .option('--force', 'Skip confirmation prompt')
+    .action(async (options) => {
+      Logger.space();
+      Logger.warn('⚠️  This will uninstall AppClean from your system.');
+
+      // Show confirmation if not using --force
+      if (!options.force) {
+        const { promptConfirmRemoval } = await import('./ui/prompts');
+        const confirmed = await promptConfirmRemoval('AppClean');
+
+        if (!confirmed) {
+          Logger.info('Uninstall cancelled');
+          Logger.space();
+          return;
+        }
+      }
+
+      const upgradeManager = new UpgradeManager();
+
+      try {
+        const result = await upgradeManager.uninstall();
+
+        if (result.success) {
+          Logger.success(result.message);
+          Logger.info('Thank you for using AppClean!');
+        } else {
+          Logger.warn(result.message);
+        }
+      } catch (error) {
+        Logger.error(`Uninstall failed: ${(error as Error).message}`);
+        process.exit(1);
+      }
+
+      Logger.space();
+    });
+
   program.on('command:*', () => {
     if (process.argv.length < 3) {
       interactiveMode().catch((error) => {
