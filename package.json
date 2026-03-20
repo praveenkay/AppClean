@@ -1,6 +1,6 @@
 {
   "name": "appclean",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "type": "module",
   "description": "A powerful CLI tool to intelligently find and safely uninstall applications from your system with all their artifacts",
   "main": "dist/index.js",
