@@ -4,7 +4,7 @@
  * v1.8.0 Feature
  */
 
-import { Logger } from '../utils/logger';
+import { Logger } from '../utils/logger.js';
 
 export interface ScanMetrics {
   startTime: Date;

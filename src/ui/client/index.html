@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AppClean - Intelligently remove applications and all their hidden files">
+  <meta name="theme-color" content="#3b82f6">
+  <title>AppClean - Application Remover</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/static/styles/variables.css">
+  <link rel="stylesheet" href="/static/styles/base.css">
+  <link rel="stylesheet" href="/static/styles/layout.css">
+  <link rel="stylesheet" href="/static/styles/components.css">
+  <link rel="stylesheet" href="/static/styles/animations.css">
+</head>
+<body>
+  <!-- Root container for SPA -->
+  <div id="app" class="app-root">
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+      <div class="container-xl">
+        <div class="flex-between">
+          <div class="flex items-center gap-4">
+            <h1 class="navbar-brand" id="navbar-brand">🧹 AppClean</h1>
+            <button class="btn btn-ghost navbar-menu-toggle" id="navbar-menu-toggle" aria-label="Toggle navigation">
+              <span class="hamburger">☰</span>
+            </button>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="btn btn-ghost btn-sm" id="theme-toggle" aria-label="Toggle dark mode">
+              <span class="theme-icon">🌙</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main layout -->
+    <div class="app-layout flex">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-nav">
+          <nav class="nav-links">
+            <a href="#/" class="nav-link active" data-view="dashboard">
+              <span class="nav-icon">📊</span>
+              <span class="nav-label">Dashboard</span>
+            </a>
+            <a href="#/apps" class="nav-link" data-view="apps">
+              <span class="nav-icon">📦</span>
+              <span class="nav-label">Apps</span>
+            </a>
+            <a href="#/settings" class="nav-link" data-view="settings">
+              <span class="nav-icon">⚙️</span>
+              <span class="nav-label">Settings</span>
+            </a>
+          </nav>
+        </div>
+        <div class="sidebar-footer">
+          <a href="https://github.com/praveenkay/AppClean" target="_blank" rel="noopener" class="sidebar-link">
+            <span class="nav-icon">💬</span>
+            <span class="nav-label">GitHub</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <main class="main-content" id="main-content">
+        <div class="container-xl">
+          <!-- Pages will be rendered here -->
+          <div id="page-container" class="page-container">
+            <!-- Loading skeleton -->
+            <div class="loading-state" id="loading-state">
+              <div class="spinner-lg spinner"></div>
+              <p class="text-center text-muted mt-4">Loading AppClean...</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-backdrop" id="modal-backdrop">
+      <div class="modal" id="modal" role="dialog" aria-labelledby="modal-title">
+        <div class="modal-header">
+          <h2 class="modal-title" id="modal-title">Dialog</h2>
+          <button class="modal-close" id="modal-close" aria-label="Close dialog">&times;</button>
+        </div>
+        <div class="modal-body" id="modal-body">
+          <!-- Content will be rendered here -->
+        </div>
+        <div class="modal-footer" id="modal-footer">
+          <!-- Buttons will be rendered here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="notifications-container" id="notifications-container" role="region" aria-label="Notifications" aria-live="polite">
+      <!-- Notifications will be rendered here -->
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="/static/app.js"></script>
+</body>
+</html>

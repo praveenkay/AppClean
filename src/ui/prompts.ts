@@ -1,6 +1,6 @@
 import inquirer from 'inquirer';
 import { InstalledApp, ArtifactPath } from '../types';
-import { Logger, formatBytes } from '../utils/logger';
+import { Logger, formatBytes } from '../utils/logger.js';
 import chalk from 'chalk';
 
 export async function promptSearchQuery(): Promise<string> {

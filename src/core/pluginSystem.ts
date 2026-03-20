@@ -5,7 +5,7 @@
  */
 
 import { ArtifactPath } from '../types';
-import { Logger } from '../utils/logger';
+import { Logger } from '../utils/logger.js';
 
 export interface AppDetectorPlugin {
   name: string;

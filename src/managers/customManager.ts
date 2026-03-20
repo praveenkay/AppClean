@@ -1,11 +1,11 @@
 import path from 'path';
-import { getHomeDir } from '../utils/platform';
+import { getHomeDir } from '../utils/platform.js';
 import {
   pathExists,
   listDirectory,
   readFile,
   listDirectoryDeep,
-} from '../utils/filesystem';
+} from '../utils/filesystem.js';
 import { InstalledApp, ArtifactPath } from '../types';
 
 export class CustomManager {

@@ -1,10 +1,10 @@
-import { NpmManager } from '../managers/npmManager';
-import { BrewManager } from '../managers/brewManager';
-import { LinuxManager } from '../managers/linuxManager';
-import { CustomManager } from '../managers/customManager';
-import { isMacOS, isLinux } from '../utils/platform';
+import { NpmManager } from '../managers/npmManager.js';
+import { BrewManager } from '../managers/brewManager.js';
+import { LinuxManager } from '../managers/linuxManager.js';
+import { CustomManager } from '../managers/customManager.js';
+import { isMacOS, isLinux } from '../utils/platform.js';
 import { InstalledApp, ArtifactPath, SearchOptions } from '../types';
-import { getFileSize } from '../utils/filesystem';
+import { getFileSize } from '../utils/filesystem.js';
 
 export class Detector {
   private npmManager: NpmManager;

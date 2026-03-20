@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
-import { RemovalRecord, DeletedArtifact } from './removalRecorder';
-import { formatBytes, formatDate } from '../utils/logger';
+import { RemovalRecord, DeletedArtifact } from './removalRecorder.js';
+import { formatBytes, formatDate } from '../utils/logger.js';
 
 export const REMOVAL_DISCLAIMER = `
 ╔════════════════════════════════════════════════════════════════════════════╗

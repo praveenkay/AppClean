@@ -1,9 +1,9 @@
 import { execSync } from 'child_process';
 import path from 'path';
-import { getHomeDir } from '../utils/platform';
-import { pathExists, listDirectory, readFile } from '../utils/filesystem';
+import { getHomeDir } from '../utils/platform.js';
+import { pathExists, listDirectory, readFile } from '../utils/filesystem.js';
 import { InstalledApp, ArtifactPath } from '../types';
-import { Logger } from '../utils/logger';
+import { Logger } from '../utils/logger.js';
 
 export class NpmManager {
   private globalNpmPath: string;

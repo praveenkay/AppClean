@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
-import { isMacOS, isLinux, isWindows } from '../utils/platform';
-import { Logger } from '../utils/logger';
+import { isMacOS, isLinux, isWindows } from '../utils/platform.js';
+import { Logger } from '../utils/logger.js';
 
 export class PermissionHandler {
   /**

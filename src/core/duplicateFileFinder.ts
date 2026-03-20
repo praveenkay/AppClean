@@ -7,7 +7,7 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
-import { Logger } from '../utils/logger';
+import { Logger } from '../utils/logger.js';
 
 export interface DuplicateFile {
   hash: string;

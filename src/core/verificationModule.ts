@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
-import { isMacOS, isLinux, isWindows } from '../utils/platform';
-import { pathExists } from '../utils/filesystem';
+import { isMacOS, isLinux, isWindows } from '../utils/platform.js';
+import { pathExists } from '../utils/filesystem.js';
 
 export type VerificationStatus = 'verified_removed' | 'still_exists' | 'partial_removal' | 'unknown';
 

@@ -3,15 +3,15 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
-import { Detector } from './core/detector';
-import { Remover } from './core/remover';
-import { GUIServer } from './ui/guiServer';
+import { Detector } from './core/detector.js';
+import { Remover } from './core/remover.js';
+import { GUIServer } from './ui/guiServer.js';
 import {
   showMainMenu,
   showAppMenu,
   showHeader,
   showHelp,
-} from './ui/menu';
+} from './ui/menu.js';
 import {
   promptSearchQuery,
   promptSelectApp,
@@ -21,12 +21,12 @@ import {
   promptSortBy,
   displayAppDetails,
   promptFinalConfirmation,
-} from './ui/prompts';
-import { Logger, formatBytes } from './utils/logger';
-import { UpgradeManager } from './utils/upgrade';
+} from './ui/prompts.js';
+import { Logger, formatBytes } from './utils/logger.js';
+import { UpgradeManager } from './utils/upgrade.js';
 import { InstalledApp } from './types';
 
-const VERSION = '1.9.0';
+const VERSION = '2.0.0';
 
 async function interactiveMode(): Promise<void> {
   showHeader();

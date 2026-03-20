@@ -4,10 +4,10 @@
  * v1.6.0 Feature
  */
 
-import { getHomeDir } from '../utils/platform';
+import { getHomeDir } from '../utils/platform.js';
 import path from 'path';
 import fs from 'fs';
-import { Logger } from '../utils/logger';
+import { Logger } from '../utils/logger.js';
 
 export type CleanupFrequency = 'daily' | 'weekly' | 'monthly' | 'custom';
 

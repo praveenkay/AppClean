@@ -1,21 +1,30 @@
 /**
- * GUI Server for AppClean
- * Provides web-based GUI interface for macOS, Linux, and Windows
- * v1.2.0 Feature
+ * GUI Server for AppClean v2.0.0
+ * Modern SPA with API endpoints
  */
 
 import { createServer, IncomingMessage, ServerResponse } from 'http';
-import { Logger } from '../utils/logger';
-import { UpgradeManager } from '../utils/upgrade';
+import { readFileSync, existsSync } from 'fs';
+import { join } from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { Logger } from '../utils/logger.js';
+import { sendJson, sendError, parseQueryParams } from './server/middleware/errorHandler.js';
+import { handleAppRoutes } from './server/routes/apps.js';
+import { handleDashboardRoutes } from './server/routes/dashboard.js';
+import { handleSettingsRoutes } from './server/routes/settings.js';
+
+// ES module compatibility: Define __dirname and __filename
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export class GUIServer {
   private port: number = 3000;
   private server: any;
-  private upgradeManager: UpgradeManager;
+  private spaHtml: string | null = null;
 
   constructor(port: number = 3000) {
     this.port = port;
-    this.upgradeManager = new UpgradeManager();
   }
 
   /**
@@ -24,20 +33,19 @@ export class GUIServer {
   async start(): Promise<void> {
     Logger.info(`Starting AppClean GUI server on port ${this.port}...`);
 
+    // Try to load SPA HTML (from compiled dist)
+    this.loadSPAHtml();
+
     this.server = createServer((req, res) => {
-      if (req.url === '/') {
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(this.getIndexHTML());
-      } else if (req.url?.startsWith('/api/')) {
-        this.handleAPIRequest(req, res);
-      } else {
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
-        res.end('Not Found');
-      }
+      this.handleRequest(req, res);
     });
 
-    this.server.listen(this.port, () => {
-      Logger.success(`GUI server running at http://localhost:${this.port}`);
+    return new Promise((resolve) => {
+      this.server.listen(this.port, () => {
+        Logger.success(`✨ AppClean GUI running at http://localhost:${this.port}`);
+        Logger.info('Press Ctrl+C to stop the server');
+        resolve();
+      });
     });
   }
 
@@ -52,524 +60,197 @@ export class GUIServer {
   }
 
   /**
-   * Handle API requests
+   * Main request handler
    */
-  private async handleAPIRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
-    const url = req.url || '';
+  private async handleRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
+    const url = req.url || '/';
+    const method = req.method || 'GET';
+    const pathname = url.split('?')[0];
+
+    // Set CORS headers
+    this.setCORSHeaders(res);
+
+    // Handle preflight requests
+    if (method === 'OPTIONS') {
+      res.writeHead(200);
+      res.end();
+      return;
+    }
 
     try {
-      if (url === '/api/version') {
-        await this.handleVersionCheck(res);
-      } else if (url === '/api/upgrade') {
-        await this.handleUpgrade(res);
-      } else if (url === '/api/uninstall') {
-        await this.handleUninstall(res);
-      } else {
-        res.writeHead(404, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'API endpoint not found' }));
+      // Route API requests
+      if (pathname.startsWith('/api/')) {
+        return this.handleAPIRequest(method, pathname, req, res);
       }
+
+      // Serve static assets
+      if (pathname.startsWith('/static/')) {
+        return this.serveStaticAsset(pathname, res);
+      }
+
+      // Serve SPA for all other routes
+      this.serveSPA(res);
     } catch (error) {
-      res.writeHead(500, { 'Content-Type': 'application/json' });
-      res.end(
-        JSON.stringify({ error: (error as Error).message })
-      );
+      Logger.error(`Request error: ${(error as Error).message}`);
+      sendError(res, 'Internal server error', 500);
     }
   }
 
   /**
-   * Handle version check request
+   * Handle API requests
    */
-  private async handleVersionCheck(res: ServerResponse): Promise<void> {
-    const versionInfo = await this.upgradeManager.checkForUpdates();
+  private handleAPIRequest(
+    method: string,
+    pathname: string,
+    req: IncomingMessage,
+    res: ServerResponse
+  ): void {
+    // Try app routes
+    if (handleAppRoutes(method, pathname, req, res)) {
+      return;
+    }
 
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(versionInfo));
+    // Try dashboard routes
+    if (handleDashboardRoutes(method, pathname, req, res)) {
+      return;
+    }
+
+    // Try settings routes
+    if (handleSettingsRoutes(method, pathname, req, res)) {
+      return;
+    }
+
+    // Unknown endpoint
+    sendError(res, 'API endpoint not found', 404);
   }
 
   /**
-   * Handle upgrade request
+   * Serve static assets (CSS, JS)
    */
-  private async handleUpgrade(res: ServerResponse): Promise<void> {
-    const result = await this.upgradeManager.upgrade();
+  private serveStaticAsset(pathname: string, res: ServerResponse): void {
+    // Remove /static/ prefix
+    const relativePath = pathname.slice(8);
 
-    res.writeHead(result.success ? 200 : 500, {
-      'Content-Type': 'application/json',
-    });
-    res.end(JSON.stringify(result));
+    // Security: prevent directory traversal
+    if (relativePath.includes('..')) {
+      sendError(res, 'Access denied', 403);
+      return;
+    }
+
+    // Construct file path
+    const filePath = join(__dirname, 'client', relativePath);
+
+    // Check if file exists
+    if (!existsSync(filePath)) {
+      sendError(res, 'Asset not found', 404);
+      return;
+    }
+
+    try {
+      const content = readFileSync(filePath);
+      const contentType = this.getContentType(filePath);
+
+      res.writeHead(200, {
+        'Content-Type': contentType,
+        'Cache-Control': 'public, max-age=3600', // 1 hour
+      });
+      res.end(content);
+    } catch (error) {
+      Logger.warn(`Failed to serve asset ${pathname}: ${(error as Error).message}`);
+      sendError(res, 'Failed to load asset', 500);
+    }
   }
 
   /**
-   * Handle uninstall request
+   * Serve SPA HTML
    */
-  private async handleUninstall(res: ServerResponse): Promise<void> {
-    const result = await this.upgradeManager.uninstall();
-
-    res.writeHead(result.success ? 200 : 500, {
-      'Content-Type': 'application/json',
-    });
-    res.end(JSON.stringify(result));
-  }
-
-  /**
-   * Get index HTML for GUI
-   */
-  private getIndexHTML(): string {
-    return `
+  private serveSPA(res: ServerResponse): void {
+    if (!this.spaHtml) {
+      // Fallback: serve minimal HTML with error message
+      const fallbackHtml = `
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AppClean GUI - v1.2.0</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .container {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      max-width: 800px;
-      width: 100%;
-      padding: 40px;
-    }
-    h1 {
-      color: #333;
-      margin-bottom: 10px;
-    }
-    h3 {
-      color: #333;
-      margin-top: 20px;
-      margin-bottom: 15px;
-    }
-    .version {
-      color: #666;
-      font-size: 14px;
-      margin-bottom: 30px;
-    }
-    .feature-badge {
-      display: inline-block;
-      background: #667eea;
-      color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 20px;
-    }
-    p {
-      color: #666;
-      line-height: 1.6;
-      margin-bottom: 20px;
-    }
-    .section {
-      background: #f0f4ff;
-      border-left: 4px solid #667eea;
-      padding: 20px;
-      border-radius: 4px;
-      margin-top: 30px;
-    }
-    .version-info {
-      background: #f9f9f9;
-      padding: 15px;
-      border-radius: 6px;
-      margin: 15px 0;
-      font-family: monospace;
-      font-size: 14px;
-    }
-    .version-row {
-      display: flex;
-      justify-content: space-between;
-      margin: 8px 0;
-    }
-    .label {
-      color: #666;
-      font-weight: 500;
-    }
-    .value {
-      color: #333;
-      font-weight: 600;
-    }
-    .update-available {
-      color: #f59e0b;
-      font-weight: 600;
-    }
-    .up-to-date {
-      color: #10b981;
-      font-weight: 600;
-    }
-    .button-group {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    button {
-      flex: 1;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .btn-primary {
-      background: #667eea;
-      color: white;
-    }
-    .btn-primary:hover {
-      background: #5568d3;
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-    }
-    .btn-primary:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-      transform: none;
-    }
-    .btn-secondary {
-      background: #e5e7eb;
-      color: #333;
-    }
-    .btn-secondary:hover {
-      background: #d1d5db;
-    }
-    .status-message {
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 6px;
-      display: none;
-      font-weight: 500;
-    }
-    .status-success {
-      background: #d1fae5;
-      color: #065f46;
-      display: block;
-    }
-    .status-error {
-      background: #fee2e2;
-      color: #991b1b;
-      display: block;
-    }
-    .status-loading {
-      background: #dbeafe;
-      color: #1e40af;
-      display: block;
-    }
-    .spinner {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(30, 64, 175, 0.3);
-      border-top-color: #1e40af;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-right: 8px;
-      vertical-align: middle;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    ul {
-      margin-left: 20px;
-      margin-top: 10px;
-    }
-    .danger-zone {
-      background: #fee2e2;
-      border-left: 4px solid #dc2626;
-      padding: 20px;
-      border-radius: 4px;
-      margin-top: 30px;
-    }
-    .danger-zone h3 {
-      color: #991b1b;
-      margin-top: 0;
-    }
-    .danger-zone p {
-      color: #7c2d12;
-      margin-bottom: 15px;
-    }
-    .btn-danger {
-      background: #dc2626;
-      color: white;
-    }
-    .btn-danger:hover {
-      background: #b91c1c;
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(220, 38, 38, 0.4);
-    }
-    .btn-danger:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-      transform: none;
-    }
-    /* Modal Styles */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.5);
-    }
-    .modal-content {
-      background-color: white;
-      margin: auto;
-      padding: 30px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 500px;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    }
-    .modal-content h2 {
-      color: #dc2626;
-      margin-bottom: 15px;
-    }
-    .modal-content p {
-      color: #666;
-      margin-bottom: 20px;
-    }
-    .modal-buttons {
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-    }
-    .modal-buttons button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .modal-buttons .btn-cancel {
-      background: #e5e7eb;
-      color: #333;
-    }
-    .modal-buttons .btn-cancel:hover {
-      background: #d1d5db;
-    }
-    .modal-buttons .btn-confirm {
-      background: #dc2626;
-      color: white;
-    }
-    .modal-buttons .btn-confirm:hover {
-      background: #b91c1c;
-    }
-  </style>
+  <title>AppClean</title>
 </head>
-<body>
-  <div class="container">
-    <h1>🎨 AppClean GUI</h1>
-    <p class="version">v1.2.0 - GUI Application Feature</p>
-    <span class="feature-badge">Coming Soon</span>
-
-    <p>
-      A beautiful, intuitive graphical user interface for AppClean, bringing the power of
-      intelligent app removal to users who prefer a visual interface.
-    </p>
-
-    <div class="section">
-      <h3>📦 Version & Updates</h3>
-      <div class="version-info">
-        <div class="version-row">
-          <span class="label">Current Version:</span>
-          <span class="value" id="currentVersion">Loading...</span>
-        </div>
-        <div class="version-row">
-          <span class="label">Latest Version:</span>
-          <span class="value" id="latestVersion">Loading...</span>
-        </div>
-        <div class="version-row">
-          <span class="label">Status:</span>
-          <span id="updateStatus">Checking...</span>
-        </div>
-      </div>
-      <div class="button-group">
-        <button class="btn-secondary" onclick="checkVersion()">🔄 Check for Updates</button>
-        <button class="btn-primary" id="upgradeBtn" onclick="upgradeAppClean()" disabled>⬆️ Upgrade</button>
-      </div>
-      <div id="statusMessage" class="status-message"></div>
-    </div>
-
-    <div class="section">
-      <h3>🚀 Features Coming in v1.2.0</h3>
-      <ul>
-        <li>✨ Modern, responsive GUI design</li>
-        <li>🖥️ Cross-platform support (macOS, Linux, Windows)</li>
-        <li>🔍 Visual app search and discovery</li>
-        <li>📊 Beautiful artifact visualization</li>
-        <li>🗑️ Drag-and-drop app removal</li>
-        <li>📈 Real-time removal progress</li>
-        <li>📋 Interactive report viewer</li>
-      </ul>
-    </div>
-
-    <div class="danger-zone">
-      <h3>⚠️ Danger Zone</h3>
-      <p>
-        Uninstall AppClean from your system. This action will remove the application and
-        all its global files. This cannot be undone easily.
-      </p>
-      <div class="button-group">
-        <button class="btn-danger" onclick="showUninstallConfirm()">🗑️ Uninstall AppClean</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Uninstall Confirmation Modal -->
-  <div id="uninstallModal" class="modal">
-    <div class="modal-content">
-      <h2>⚠️ Confirm Uninstall</h2>
-      <p>
-        Are you sure you want to uninstall AppClean? This action will remove the application
-        from your system and cannot be easily undone.
-      </p>
-      <p style="color: #dc2626; font-weight: 600;">
-        This action cannot be undone!
-      </p>
-      <div class="modal-buttons">
-        <button class="btn-cancel" onclick="closeUninstallConfirm()">Cancel</button>
-        <button class="btn-confirm" onclick="confirmUninstall()">Uninstall</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // Check version on page load
-    window.addEventListener('load', checkVersion);
-
-    async function checkVersion() {
-      const statusEl = document.getElementById('statusMessage');
-      statusEl.textContent = '🔄 Checking for updates...';
-      statusEl.className = 'status-message status-loading';
-      statusEl.innerHTML = '<span class="spinner"></span>Checking for updates...';
-
-      try {
-        const response = await fetch('/api/version');
-        const data = await response.json();
-
-        document.getElementById('currentVersion').textContent = 'v' + data.current;
-        document.getElementById('latestVersion').textContent = 'v' + data.latest;
-
-        const upgradeBtn = document.getElementById('upgradeBtn');
-        const updateStatus = document.getElementById('updateStatus');
-
-        if (data.isUpdateAvailable) {
-          updateStatus.innerHTML = '<span class="update-available">⚠️ Update available!</span>';
-          upgradeBtn.disabled = false;
-          statusEl.textContent = '✓ Update available! Click the Upgrade button to install.';
-          statusEl.className = 'status-message status-success';
-        } else {
-          updateStatus.innerHTML = '<span class="up-to-date">✓ Up to date</span>';
-          upgradeBtn.disabled = true;
-          statusEl.textContent = '✓ AppClean is already up to date!';
-          statusEl.className = 'status-message status-success';
-        }
-      } catch (error) {
-        statusEl.textContent = '✗ Failed to check for updates: ' + error.message;
-        statusEl.className = 'status-message status-error';
-      }
-    }
-
-    async function upgradeAppClean() {
-      const statusEl = document.getElementById('statusMessage');
-      const upgradeBtn = document.getElementById('upgradeBtn');
-
-      upgradeBtn.disabled = true;
-      statusEl.innerHTML = '<span class="spinner"></span>Upgrading AppClean...';
-      statusEl.className = 'status-message status-loading';
-
-      try {
-        const response = await fetch('/api/upgrade');
-        const data = await response.json();
-
-        if (data.success) {
-          statusEl.textContent = '✓ ' + data.message;
-          statusEl.className = 'status-message status-success';
-          setTimeout(() => {
-            statusEl.textContent = 'Please refresh the page or restart the GUI server.';
-            checkVersion();
-          }, 2000);
-        } else {
-          statusEl.textContent = '✗ ' + data.message;
-          statusEl.className = 'status-message status-error';
-          upgradeBtn.disabled = false;
-        }
-      } catch (error) {
-        statusEl.textContent = '✗ Upgrade failed: ' + error.message;
-        statusEl.className = 'status-message status-error';
-        upgradeBtn.disabled = false;
-      }
-    }
-
-    // Uninstall Functions
-    function showUninstallConfirm() {
-      document.getElementById('uninstallModal').style.display = 'block';
-    }
-
-    function closeUninstallConfirm() {
-      document.getElementById('uninstallModal').style.display = 'none';
-    }
-
-    async function confirmUninstall() {
-      const modal = document.getElementById('uninstallModal');
-      const btn = modal.querySelector('.btn-confirm');
-
-      btn.disabled = true;
-      btn.textContent = '🗑️ Uninstalling...';
-
-      try {
-        const response = await fetch('/api/uninstall');
-        const data = await response.json();
-
-        if (data.success) {
-          modal.querySelector('p').textContent = '✓ ' + data.message;
-          modal.querySelector('h2').textContent = '✓ Uninstall Complete';
-          modal.querySelector('.modal-buttons').innerHTML =
-            '<button class="btn-cancel" onclick="window.close()">Close</button>';
-          setTimeout(() => {
-            alert('AppClean has been uninstalled. You can close this window.');
-          }, 500);
-        } else {
-          alert('❌ Uninstall failed: ' + data.message);
-          btn.disabled = false;
-          btn.textContent = 'Uninstall';
-        }
-      } catch (error) {
-        alert('❌ Error: ' + error.message);
-        btn.disabled = false;
-        btn.textContent = 'Uninstall';
-      }
-    }
-
-    // Close modal when clicking outside
-    window.onclick = function(event) {
-      const modal = document.getElementById('uninstallModal');
-      if (event.target === modal) {
-        modal.style.display = 'none';
-      }
-    }
-  </script>
+<body style="font-family: system-ui; padding: 20px; text-align: center;">
+  <h1>⚠️ GUI Not Ready</h1>
+  <p>The SPA assets haven't been compiled yet.</p>
+  <p>Run <code>npm run build</code> to compile the TypeScript/CSS files.</p>
+  <p>For now, use the CLI: <code>appclean --help</code></p>
 </body>
-</html>
-    `;
+</html>`;
+
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(fallbackHtml);
+      return;
+    }
+
+    res.writeHead(200, {
+      'Content-Type': 'text/html',
+      'Cache-Control': 'no-cache',
+    });
+    res.end(this.spaHtml);
+  }
+
+  /**
+   * Load SPA HTML from compiled dist
+   */
+  private loadSPAHtml(): void {
+    const htmlPath = join(__dirname, 'client', 'index.html');
+
+    try {
+      if (existsSync(htmlPath)) {
+        this.spaHtml = readFileSync(htmlPath, 'utf-8');
+        Logger.debug('✓ Loaded SPA HTML');
+      } else {
+        Logger.warn(`⚠️  SPA HTML not found at ${htmlPath}`);
+        Logger.info('Make sure to run: npm run build');
+      }
+    } catch (error) {
+      Logger.warn(`Failed to load SPA HTML: ${(error as Error).message}`);
+    }
+  }
+
+  /**
+   * Determine content type from file extension
+   */
+  private getContentType(filePath: string): string {
+    const ext = filePath.toLowerCase().split('.').pop();
+
+    const typeMap: Record<string, string> = {
+      'js': 'application/javascript; charset=utf-8',
+      'css': 'text/css; charset=utf-8',
+      'html': 'text/html; charset=utf-8',
+      'json': 'application/json; charset=utf-8',
+      'svg': 'image/svg+xml',
+      'png': 'image/png',
+      'jpg': 'image/jpeg',
+      'jpeg': 'image/jpeg',
+      'gif': 'image/gif',
+      'ico': 'image/x-icon',
+      'webp': 'image/webp',
+      'woff': 'font/woff',
+      'woff2': 'font/woff2',
+      'ttf': 'font/ttf',
+      'eot': 'application/vnd.ms-fontobject',
+    };
+
+    return typeMap[ext || ''] || 'application/octet-stream';
+  }
+
+  /**
+   * Set CORS headers
+   */
+  private setCORSHeaders(res: ServerResponse): void {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Max-Age', '3600');
   }
 }
+
+// Export for use in CLI
+export default GUIServer;

@@ -1,22 +1,22 @@
 import path from 'path';
 import { execSync } from 'child_process';
-import { getHomeDir } from '../utils/platform';
+import { getHomeDir } from '../utils/platform.js';
 import {
   deleteFile,
   deleteDirectory,
   pathExists,
   getDirectorySize,
-} from '../utils/filesystem';
+} from '../utils/filesystem.js';
 import { ArtifactPath, RemovalOptions, RemovalResult } from '../types';
-import { Logger, formatBytes } from '../utils/logger';
-import { NpmManager } from '../managers/npmManager';
-import { BrewManager } from '../managers/brewManager';
-import { LinuxManager } from '../managers/linuxManager';
-import { PermissionHandler } from './permissionHandler';
-import { ServiceFileDetector } from './serviceFileDetector';
-import { RemovalRecorder, RemovalRecord } from './removalRecorder';
-import { ReportGenerator } from './reportGenerator';
-import { VerificationModule } from './verificationModule';
+import { Logger, formatBytes } from '../utils/logger.js';
+import { NpmManager } from '../managers/npmManager.js';
+import { BrewManager } from '../managers/brewManager.js';
+import { LinuxManager } from '../managers/linuxManager.js';
+import { PermissionHandler } from './permissionHandler.js';
+import { ServiceFileDetector } from './serviceFileDetector.js';
+import { RemovalRecorder, RemovalRecord } from './removalRecorder.js';
+import { ReportGenerator } from './reportGenerator.js';
+import { VerificationModule } from './verificationModule.js';
 
 export class Remover {
   async previewRemoval(artifacts: ArtifactPath[]): Promise<void> {

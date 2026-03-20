@@ -1,5 +1,5 @@
 import { execSync } from 'child_process';
-import { Logger } from './logger';
+import { Logger } from './logger.js';
 
 export interface VersionInfo {
   current: string;

@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import { getHomeDir } from '../utils/platform';
+import { getHomeDir } from '../utils/platform.js';
 import { ArtifactPath } from '../types';
-import { formatDate, formatBytes } from '../utils/logger';
+import { formatDate, formatBytes } from '../utils/logger.js';
 
 export interface RemovalRecord {
   timestamp: Date;

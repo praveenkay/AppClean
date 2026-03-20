@@ -5,7 +5,7 @@
  */
 
 import { execSync } from 'child_process';
-import { Logger } from '../utils/logger';
+import { Logger } from '../utils/logger.js';
 import { InstalledApp } from '../types';
 
 export interface UpdateInfo {

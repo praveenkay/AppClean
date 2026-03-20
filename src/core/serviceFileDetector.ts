@@ -1,6 +1,6 @@
 import path from 'path';
-import { isMacOS, isLinux, getHomeDir } from '../utils/platform';
-import { pathExists, readFile, listDirectory } from '../utils/filesystem';
+import { isMacOS, isLinux, getHomeDir } from '../utils/platform.js';
+import { pathExists, readFile, listDirectory } from '../utils/filesystem.js';
 import { ArtifactPath } from '../types';
 
 export interface ServiceFile {

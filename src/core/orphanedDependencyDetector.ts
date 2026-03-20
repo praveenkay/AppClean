@@ -5,10 +5,10 @@
  */
 
 import { execSync } from 'child_process';
-import { getHomeDir } from '../utils/platform';
+import { getHomeDir } from '../utils/platform.js';
 import path from 'path';
 import fs from 'fs';
-import { Logger } from '../utils/logger';
+import { Logger } from '../utils/logger.js';
 
 export interface OrphanedPackage {
   name: string;
