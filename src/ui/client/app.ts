@@ -17,17 +17,17 @@ import { renderSettings } from './pages/settings.js';
 /**
  * Initialize the SPA
  */
-export function initApp(): void {
+export async function initApp(): Promise<void> {
   console.log('🧹 AppClean GUI v1.0.0 initializing...');
 
-  // Register routes
+  // Register routes first
   registerRoutes();
-
-  // Initialize stores
-  initializeStores();
 
   // Setup UI listeners
   setupUIListeners();
+
+  // Initialize stores with data
+  await initializeStores();
 
   // Navigate to initial route
   router.navigate('');
@@ -65,11 +65,13 @@ function registerRoutes(): void {
  */
 async function initializeStores(): Promise<void> {
   try {
-    // Load dashboard stats
+    // Load dashboard stats (required for initial render)
     await dashboardStore.loadStats();
 
-    // Load initial app list
-    await appStore.loadApps();
+    // Load app list in background (don't block on this)
+    appStore.loadApps().catch((error) => {
+      console.error('Failed to load apps:', error);
+    });
   } catch (error) {
     console.error('Failed to initialize stores:', error);
     uiStore.showError('Failed to load application data');
@@ -87,7 +89,9 @@ function setupUIListeners(): void {
 
   // Subscribe to app store changes
   appStore.subscribe((state) => {
-    console.log(`Apps loaded: ${state.apps.length}`);
+    if (state && state.apps) {
+      console.log(`Apps loaded: ${state.apps.length}`);
+    }
   });
 
   // Subscribe to dashboard store changes
@@ -115,7 +119,7 @@ export { appStore, dashboardStore, uiStore, router };
 
 // Initialize on DOM ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initApp);
+  document.addEventListener('DOMContentLoaded', () => initApp().catch(e => console.error('Init error:', e)));
 } else {
-  initApp();
+  initApp().catch(e => console.error('Init error:', e));
 }

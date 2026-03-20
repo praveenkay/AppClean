@@ -119,7 +119,12 @@ export class ApiClient {
     const contentType = response.headers.get('content-type');
 
     if (contentType?.includes('application/json')) {
-      return response.json();
+      const json = await response.json();
+      // Extract data from wrapped response format: { success: true, data: T }
+      if (json && typeof json === 'object' && 'data' in json && 'success' in json) {
+        return json.data as T;
+      }
+      return json as T;
     }
 
     if (contentType?.includes('text/')) {

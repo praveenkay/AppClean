@@ -25,11 +25,24 @@ export function renderDashboard(): void {
   dashboardStore.refreshStats(true).then(() => {
     const state = dashboardStore.getState();
     const stats = state.stats;
+    const error = state.error;
+
+    if (error) {
+      container.innerHTML = `
+        <div class="alert alert-danger" style="margin: 20px;">
+          <h3 style="margin-top: 0;">⚠️ Error Loading Dashboard</h3>
+          <p>${escapeHtml(error)}</p>
+          <button class="btn btn-primary btn-sm" onclick="window.location.reload()">Retry</button>
+        </div>
+      `;
+      return;
+    }
 
     if (!stats) {
       container.innerHTML = `
-        <div class="alert alert-danger">
-          <span>Failed to load dashboard stats</span>
+        <div class="alert alert-warning" style="margin: 20px;">
+          <h3 style="margin-top: 0;">⏳ Initializing</h3>
+          <p>Dashboard is loading. Please wait...</p>
         </div>
       `;
       return;
@@ -43,6 +56,15 @@ export function renderDashboard(): void {
         renderDashboardContent(container, newState.stats);
       }
     });
+  }).catch((error) => {
+    console.error('Dashboard error:', error);
+    container.innerHTML = `
+      <div class="alert alert-danger" style="margin: 20px;">
+        <h3 style="margin-top: 0;">❌ Failed to Load Dashboard</h3>
+        <p>An unexpected error occurred. Please check the console for details.</p>
+        <button class="btn btn-primary btn-sm" onclick="window.location.reload()">Reload Page</button>
+      </div>
+    `;
   });
 }
 
@@ -51,7 +73,7 @@ export function renderDashboard(): void {
  */
 function renderDashboardContent(container: HTMLElement, stats: DashboardStats): void {
   container.innerHTML = `
-    <div class="dashboard-page">
+    <div class="dashboard-page fade-in">
       <!-- Header -->
       <div class="page-header mb-8">
         <h1 class="text-3xl font-bold">📊 Dashboard</h1>
@@ -88,10 +110,10 @@ function renderDashboardContent(container: HTMLElement, stats: DashboardStats): 
           </div>
           <p class="text-sm text-muted">
             ${stats.diskUsagePercent < 80
-              ? '✓ Disk usage is healthy'
+              ? '✅ Disk usage is healthy'
               : stats.diskUsagePercent < 90
               ? '⚠️ Disk usage is getting high'
-              : '❌ Disk usage is critical'}
+              : '🔴 Disk usage is critical'}
           </p>
         </div>
       </div>

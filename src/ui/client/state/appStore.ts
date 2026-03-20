@@ -57,16 +57,20 @@ export class AppStore extends Store<AppStoreState> {
       const response = await fetch('/api/apps/list');
       if (!response.ok) throw new Error('Failed to load apps');
 
-      const data = await response.json();
+      const json = await response.json();
+      const data = json.data || json; // Handle wrapped { success, data } format
+
       this.setState({
-        apps: data.apps,
-        total: data.total,
-        page: data.page,
+        apps: data.apps || [],
+        total: data.total || 0,
+        page: data.page || 1,
         isLoading: false,
       });
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Failed to load apps:', errorMsg);
       this.setState({
-        error: (error as Error).message,
+        error: errorMsg,
         isLoading: false,
       });
     }
@@ -88,15 +92,19 @@ export class AppStore extends Store<AppStoreState> {
       const response = await fetch(`/api/apps/search?${params}`);
       if (!response.ok) throw new Error('Failed to search apps');
 
-      const data = await response.json();
+      const json = await response.json();
+      const data = json.data || json; // Handle wrapped { success, data } format
+
       this.setState({
-        apps: data.apps,
-        total: data.count,
+        apps: data.apps || [],
+        total: data.count || 0,
         isLoading: false,
       });
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Failed to search apps:', errorMsg);
       this.setState({
-        error: (error as Error).message,
+        error: errorMsg,
         isLoading: false,
       });
     }
@@ -145,15 +153,19 @@ export class AppStore extends Store<AppStoreState> {
       const response = await fetch(`/api/apps/search?${params}`);
       if (!response.ok) throw new Error('Failed to load more apps');
 
-      const data = await response.json();
+      const json = await response.json();
+      const data = json.data || json; // Handle wrapped { success, data } format
+
       this.setState({
-        apps: [...this.state.apps, ...data.apps],
+        apps: [...this.state.apps, ...(data.apps || [])],
         page: nextPage,
         isLoading: false,
       });
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Failed to load next page:', errorMsg);
       this.setState({
-        error: (error as Error).message,
+        error: errorMsg,
         isLoading: false,
       });
     }

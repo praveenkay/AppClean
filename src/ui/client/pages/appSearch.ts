@@ -40,6 +40,19 @@ export function renderAppSearch(): void {
 function renderAppSearchContent(container: HTMLElement): void {
   const state = appStore.getState();
 
+  // Ensure state has apps array
+  if (!state || !state.apps) {
+    console.error('AppStore state is invalid:', state);
+    container.innerHTML = `
+      <div class="alert alert-danger">
+        <h3>Error Loading Apps</h3>
+        <p>Failed to load application state. Please refresh the page.</p>
+        <button class="btn btn-primary btn-sm mt-4" onclick="window.location.reload()">Reload</button>
+      </div>
+    `;
+    return;
+  }
+
   container.innerHTML = `
     <div class="app-search-page">
       <!-- Header -->
@@ -82,7 +95,7 @@ function renderAppSearchContent(container: HTMLElement): void {
       <!-- Apps Grid -->
       <div class="apps-grid">
         ${
-          state.apps.length > 0
+          (state.apps && state.apps.length > 0)
             ? `
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             ${state.apps.map((app) => renderAppCard(app)).join('')}

@@ -44,17 +44,27 @@ export class DashboardStore extends Store<DashboardStoreState> {
     this.setState({ isLoading: true, error: null });
     try {
       const response = await fetch('/api/dashboard/stats');
-      if (!response.ok) throw new Error('Failed to load dashboard stats');
+      if (!response.ok) throw new Error(`Failed to load dashboard stats: ${response.status}`);
 
-      const stats = await response.json();
+      const data = await response.json();
+
+      // Extract stats from API response format { success: true, data: {...} }
+      const stats = data.data || data;
+
+      if (!stats) {
+        throw new Error('Invalid response format from server');
+      }
+
       this.setState({
         stats,
         isLoading: false,
         lastUpdated: Date.now(),
       });
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Failed to load dashboard stats:', errorMsg);
       this.setState({
-        error: (error as Error).message,
+        error: errorMsg,
         isLoading: false,
       });
     }
