@@ -1,18 +1,38 @@
-# AppClean 🧹
+<div align="center">
+  <img src="https://raw.githubusercontent.com/praveenkay/AppClean/main/assets/logo.png" alt="AppClean Logo" width="120" height="120" style="border-radius: 50%; background: #1a1a2e; padding: 20px;">
 
-**Intelligently find and safely remove applications with all their hidden files and artifacts.**
+  # AppClean 🧹
 
-A complete application uninstaller with both a beautiful modern GUI and powerful CLI. Remove apps installed via npm, Homebrew, apt, and other package managers—plus all associated files, configs, caches, and leftover data.
+  **Intelligently find and safely uninstall applications with all their artifacts**
 
-[![version](https://img.shields.io/badge/version-2.0.0-blue?style=flat-square)](https://github.com/praveenkay/AppClean/releases/tag/v2.0.0)
-[![license](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
-[![npm](https://img.shields.io/npm/dm/appclean?style=flat-square)](https://npmjs.com/package/appclean)
+  [![version](https://img.shields.io/badge/version-2.0.0-blue?style=flat-square)](https://github.com/praveenkay/AppClean/releases/tag/v2.0.0)
+  [![license](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
+  [![platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Linux%20%7C%20Windows-blue?style=flat-square)](#platform-support)
+  [![npm](https://img.shields.io/npm/dm/appclean?style=flat-square)](https://npmjs.com/package/appclean)
+
+  **A powerful, cross-platform tool for developers, system administrators, and everyone**
+
+</div>
 
 ---
 
-## 🎉 What's New in v2.0.0
+## What is AppClean?
 
-**Complete GUI Overhaul** - A brand new modern single-page application (SPA) interface!
+AppClean is an intelligent application uninstaller that completely removes apps from your system along with all their hidden files, configurations, caches, and leftover data. It supports apps installed via npm, Homebrew, apt, yum, and custom installers across macOS, Linux, and Windows.
+
+### Why AppClean?
+- 🎯 **Complete Removal** - Finds and removes all app-related files, not just the executable
+- 🛡️ **Safe & Smart** - Preview what will be deleted before confirming
+- 💾 **Backup Option** - Create backups before removal for peace of mind
+- 🎨 **Beautiful Interface** - Modern GUI makes app management easy for everyone
+- ⚡ **Fast & Efficient** - ~50KB bundle, <100ms API responses
+- 🔌 **Programmable** - Full REST API for automation and integration
+
+---
+
+## ✨ What's New in v2.0.0
+
+🎉 **Complete GUI Overhaul** - A brand new modern single-page application (SPA) interface for intelligent app management!
 
 ### New Features
 - 🎨 **Beautiful SPA Interface** - Clean, minimal design with dark mode support
