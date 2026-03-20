@@ -1,11 +1,13 @@
-name: Publish to npm
+name: Publish to npm & Create Release
 
 on:
   push:
     tags:
-      - 'v*'
-  release:
-    types: [published]
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+  packages: write
 
 jobs:
   publish:
@@ -31,31 +33,72 @@ jobs:
       - name: Run tests (if available)
         run: npm test --if-present || true
 
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
       - name: Publish to npm
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Get the previous tag
+          PREV_TAG=$(git describe --tags --abbrev=0 $(git rev-list --tags --skip=1 -n1) 2>/dev/null || echo "")
+
+          if [ -z "$PREV_TAG" ]; then
+            CHANGELOG="Initial release"
+          else
+            CHANGELOG=$(git log $PREV_TAG..HEAD --pretty=format:"- %h: %s" | head -20)
+          fi
+
+          # Save to output file (handle multiline)
+          echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v')
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref }}
-          release_name: AppClean ${{ github.ref }}
+          name: "AppClean v${{ steps.version.outputs.VERSION }}"
           body: |
-            ## Release Notes
+            ## 📦 Release v${{ steps.version.outputs.VERSION }}
 
-            AppClean ${{ github.ref }} has been published to npm!
+            AppClean v${{ steps.version.outputs.VERSION }} has been published to npm!
 
-            📦 **npm**: https://www.npmjs.com/package/appclean
-            🚀 **Install**: `npm install -g appclean@${{ github.ref }}`
+            ### 🚀 Quick Start
+            ```bash
+            npm install -g appclean@latest
+            ```
 
-            This version includes all bug fixes and improvements from recent commits.
+            Or upgrade your existing installation:
+            ```bash
+            appclean upgrade
+            ```
+
+            ### 📝 Changes
+            ${{ steps.changelog.outputs.CHANGELOG }}
+
+            ### 📎 Links
+            - 📦 [npm Package](https://www.npmjs.com/package/appclean)
+            - 💻 [GitHub Repository](https://github.com/praveenkay/AppClean)
+            - 🐛 [Report Issues](https://github.com/praveenkay/AppClean/issues)
+
+            ---
+            Thank you for using AppClean! 🎉
           draft: false
           prerelease: false
 
+      - name: Notify success
+        if: success()
+        run: |
+          echo "✅ Successfully published AppClean v${{ steps.version.outputs.VERSION }}"
+          echo "📦 npm: https://www.npmjs.com/package/appclean/v/${{ steps.version.outputs.VERSION }}"
+          echo "🔖 Release: https://github.com/praveenkay/AppClean/releases/tag/v${{ steps.version.outputs.VERSION }}"
+
       - name: Notify on failure
         if: failure()
-        run: echo "❌ Failed to publish AppClean to npm"
+        run: echo "❌ Failed to publish AppClean v${{ steps.version.outputs.VERSION }}"

@@ -1,6 +1,27 @@
 # AppClean Release Guide
 
-This guide explains how to release new versions of AppClean to npm and GitHub.
+This guide explains how to release new versions of AppClean to npm and GitHub with **full automation**.
+
+## ⚡ CRITICAL: Setup Required (One-time)
+
+Before you can use automatic releases, you MUST set up **NPM_TOKEN** in GitHub Secrets:
+
+### 1. Get NPM Token
+```bash
+npm token create --read-only
+```
+Visit: https://www.npmjs.com/settings/YOUR_USERNAME/tokens
+
+### 2. Add to GitHub Secrets
+1. Go to: https://github.com/praveenkay/AppClean/settings/secrets/actions
+2. Click **"New repository secret"**
+3. Name: `NPM_TOKEN`
+4. Value: Paste your npm token
+5. Click **"Add secret"**
+
+⚠️ **Without this, automatic publishing will fail!**
+
+---
 
 ## Quick Start
 
