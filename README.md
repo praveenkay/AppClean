@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/praveenkay/AppClean/main/assets/logo.png" alt="AppClean Logo" width="120" height="120" style="border-radius: 50%; background: #1a1a2e; padding: 20px;">
+  <img src="https://raw.githubusercontent.com/praveenkay/AppClean/main/assets/logo.svg" alt="AppClean - Intelligent Application Uninstaller" width="150" height="150">
 
   # AppClean 🧹
 
