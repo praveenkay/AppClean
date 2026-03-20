@@ -5,7 +5,7 @@
 
   **Intelligently find and safely uninstall applications with all their artifacts**
 
-  [![version](https://img.shields.io/badge/version-2.0.0-blue?style=flat-square)](https://github.com/praveenkay/AppClean/releases/tag/v2.0.0)
+  [![version](https://img.shields.io/badge/version-2.0.3-blue?style=flat-square)](https://github.com/praveenkay/AppClean/releases/tag/v2.0.3)
   [![license](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
   [![platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Linux%20%7C%20Windows-blue?style=flat-square)](#platform-support)
   [![npm](https://img.shields.io/npm/dm/appclean?style=flat-square)](https://npmjs.com/package/appclean)
@@ -30,11 +30,15 @@ AppClean is an intelligent application uninstaller that completely removes apps 
 
 ---
 
-## ✨ What's New in v2.0.0
+## ✨ What's New in v2.0.3
 
-🎉 **Complete GUI Overhaul** - A brand new modern single-page application (SPA) interface for intelligent app management!
+### Latest Updates
+- 📚 **Help & Documentation** - Comprehensive Help section with guides, FAQ, and best practices
+- 🏷️ **Version Badge** - Quick version reference displayed in the navbar header
+- 🔧 **Safari Compatibility** - Improved mobile and tablet browser support with meta tag optimizations
+- 🎨 **Professional Logo** - Refined broom + checkmark logo across all platforms
 
-### New Features
+### Previous Features (v2.0.0+)
 - 🎨 **Beautiful SPA Interface** - Clean, minimal design with dark mode support
 - 📊 **Dashboard** - System statistics, disk usage gauge, recent activity log
 - 🔍 **Smart App Search** - Fuzzy search, filter by installation method, sort by name/size/date
@@ -52,7 +56,7 @@ AppClean is an intelligent application uninstaller that completely removes apps 
 ### 1. Install AppClean
 
 ```bash
-npm install -g appclean@2.0.0
+npm install -g appclean@2.0.3
 ```
 
 ### 2. Launch the GUI (Recommended)
@@ -596,20 +600,20 @@ MIT License - Free to use and modify. See [LICENSE](LICENSE) file for details.
 
 ## Changelog
 
-### v2.0.0 (Current)
-- 🎉 Complete GUI overhaul with modern SPA interface
-- 📊 Dashboard with statistics and activity log
-- 🔍 Advanced search with filtering and sorting
-- 📂 Detailed artifact analysis with charts
-- 🛡️ Safe removal with preview and backup
-- 🌙 Dark mode support
-- 🔌 REST API endpoints
-- 📱 Responsive design (mobile, tablet, desktop)
+For detailed changelog with all versions and updates, see [CHANGELOG.md](CHANGELOG.md).
 
-### v1.9.0
-- Version management and upgrade system
-- Basic web interface
-- Enhanced CLI functionality
+### Latest Release
+- v2.0.3: Help documentation, version badge, Safari compatibility improvements
+- v2.0.2: Performance improvements and bug fixes
+- v2.0.0: Complete GUI overhaul with modern SPA interface
+
+---
+
+## Maintainers
+
+**Praveen Kothapally** - Original creator and maintainer
+- GitHub: [@praveenkay](https://github.com/praveenkay)
+- Email: pkothapally@gmail.com
 
 ---
 
